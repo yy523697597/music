@@ -3,6 +3,15 @@
       <div class="recommend-content">
         <div class="slider-wrapper"></div>
         <div class="recommend-list">
+          <!-- 需要有banners的数据之后再去渲染DOM,不然的话slider的宽度不对 -->
+          <slider v-if="banners.length">
+            <div v-for="(item,index) of banners" :key="index">
+              <div @click="_bannerClick(item.typeTitle,item.url)">
+                <img :src="item.pic">
+              </div>
+              <span class="type">{{item.typeTitle}}</span>
+            </div>
+          </slider>
         <div class="list-title">热门歌单推荐</div>
         <ul></ul>
       </div>
@@ -11,16 +20,36 @@
   </div>
 </template>
 <script>
+import { ERR_OK } from 'api/config';
+import Slider from 'base/slider/slider';
 export default {
+  data() {
+    return {
+      banners: []
+    };
+  },
+  components: {
+    Slider
+  },
   created() {
     this._getRecommend();
   },
   methods: {
+    // 获取推荐数据
     _getRecommend() {
+      // 获取banner数据
       const url = this.HOST + 'banner';
       this.$http.get(url).then(res => {
-        console.log(res);
+        if (res.status === ERR_OK) {
+          this.banners = res.data.banners;
+        }
       });
+    },
+    // banner点击事件
+    _bannerClick(type, url) {
+      if (url !== '') {
+        window.location = url;
+      }
     }
   }
 };
