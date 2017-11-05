@@ -30,12 +30,10 @@ export default {};
     .tab-link {
       padding-bottom: 0.1rem;
       color: $color-text-l;
-      &.router-link-active {
-        .tab-link {
-          color: $color-theme;
-          border-bottom: 2px solid $color-theme;
-        }
-      }
+    }
+    &.router-link-active .tab-link {
+      color: $color-theme;
+      border-bottom: 2px solid $color-theme;
     }
   }
 }
