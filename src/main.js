@@ -11,6 +11,7 @@ import './common/scss/index.css';
 fastclick.attach(document.body);
 
 Vue.config.productionTip = false;
+Vue.prototype.HOST = '/api';
 Vue.prototype.$http = axios;
 /* eslint-disable no-new */
 new Vue({
