@@ -5,10 +5,15 @@ import App from './App';
 import router from './router';
 import fastclick from 'fastclick';
 import axios from 'axios';
+import VueLazyLoad from 'vue-lazyload';
 
 import './common/scss/index.css';
 
 fastclick.attach(document.body);
+
+Vue.use(VueLazyLoad, {
+  loading: require('common/img/default.jpg')
+});
 
 Vue.config.productionTip = false;
 Vue.prototype.HOST = '/api';

@@ -7,7 +7,8 @@
               <slider v-if="banners.length">
                 <div v-for="(item,index) of banners" :key="index">
                   <div @click="_bannerClick(item.typeTitle,item.url)">
-                    <img @load="loadImg" :src="item.pic">
+                    <!-- 监听图片的load事件用于初始化scroll，添加needsclick类名用于解决fastclick和better-scroll的冲突 -->
+                    <img class="needsclick" @load="loadImg" :src="item.pic">
                   </div>
                   <span class="type">{{item.typeTitle}}</span>
                 </div>
@@ -18,7 +19,7 @@
               <ul>
                 <li class="item" v-for="(item,index) of playLists" :key="index">
                   <div class="icon">
-                    <img :src="item.coverImgUrl" >
+                    <img v-lazy="item.coverImgUrl" >
                   </div>
                   <div class="text">
                     <h2 class="name">{{item.creator.nickname}}</h2>
@@ -79,7 +80,7 @@ export default {
       }
     },
     // banner图片载入后,刷新scroll
-    loadImg () {
+    loadImg() {
       if (!this.loadedImg) {
         this.loadedImg = true;
         this.$refs.scroll.refresh();
@@ -97,15 +98,15 @@ export default {
   top: 1.76rem;
   bottom: 0;
   .recommend-content {
-  height: 100%;
-  overflow: hidden;
+    height: 100%;
+    overflow: hidden;
     .slider-wrapper {
       position: relative;
       width: 100%;
       overflow: hidden;
-  }
+    }
 
-  .recommend-list {
+    .recommend-list {
       .list-title {
         height: 1.3rem;
         line-height: 1.3rem;
@@ -144,14 +145,14 @@ export default {
           }
         }
       }
-  }
+    }
 
-  .loading-container {
+    .loading-container {
       position: absolute;
       width: 100%;
       top: 50%;
       transform: translateY(-50%);
+    }
   }
-}
 }
 </style>
