@@ -1,0 +1,69 @@
+<template>
+    <scroll class="listview" :data="data">
+      <div>
+        <div class="list-container">
+        <ul class="list-group">
+          <li v-for="(singer,index) of data" class="list-group-item" :key="index">
+            <img :src="singer.img1v1Url" class="avatar">
+            <span class="name">{{singer.name}}</span>
+          </li>
+        </ul> 
+        </div>
+      </div>
+      <div class="loading-container" v-show="!data.length">
+        <loading></loading>
+      </div>
+    </scroll>
+</template>
+<script>
+import Scroll from 'base/scroll/scroll';
+import Loading from 'base/loading/loading';
+export default {
+  components: {
+    Scroll,
+    Loading
+  },
+  props: {
+    data: {
+      type: Array,
+      default() {
+        return [];
+      }
+    }
+  }
+};
+</script>
+<style lang="scss" scoped>
+@import '~common/scss/variable';
+
+.listview {
+  height: 100%;
+  overflow: hidden;
+  .list-group {
+    padding-bottom: 0.6rem;
+
+    .list-group-item {
+      display: flex;
+      align-items: center;
+      padding: 0.4rem 0 0 0.6rem;
+      .avatar {
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+      }
+
+      .name {
+        margin-left: 0.4rem;
+        color: $color-text-l;
+        font-size: $font-size-medium;
+      }
+    }
+  }
+  .loading-container {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+</style>

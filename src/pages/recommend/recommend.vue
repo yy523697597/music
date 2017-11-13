@@ -28,7 +28,6 @@
                 </li>
               </ul>
             </div>
-           
         </div>
          <div class="loading-container" v-show="!playLists.length">
             <loading></loading>

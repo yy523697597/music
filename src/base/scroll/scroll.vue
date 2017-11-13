@@ -51,7 +51,9 @@ export default {
   watch: {
     data() {
       this.$nextTick(() => {
+        console.log(this.data);
         this.refresh();
+        console.log(111);
       });
     }
   }
