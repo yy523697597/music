@@ -1,6 +1,6 @@
 <template>
   <div class="singer">
-    <listview :data="artists"></listview>
+    <listview :data="artists" @pullingUp="pullingUp" @pullingDown="pullingDown"></listview>
   </div>
 </template>
 <script>
@@ -14,14 +14,13 @@ export default {
       offset: 0,
       limit: 20,
       // 歌手数据
-      artists: []
+      artists: [],
+      // 是否有更多歌手
+      haveMore: true
     };
   },
   created() {
     this._getSinger(this.offset, this.limit);
-    setTimeout(() => {
-      this._getSinger(this.offset, this.limit);
-    }, 3000);
   },
   methods: {
     // offset 起始位置
@@ -32,10 +31,24 @@ export default {
         if (res.data.code === 200) {
           // 设置偏移
           this.offset += limit;
-          this.artists = res.data.artists;
+          this.haveMore = res.data.more;
+          this.artists = this.artists.concat(res.data.artists);
         }
       });
+    },
+    // 上拉加载更多
+    pullingUp() {
+      if (this.haveMore) {
+        this._getSinger(this.offset, this.limit);
+      } else {
+        alert('我是有底线的...');
+      }
     }
+    // 下拉刷新
+    // pullingDown() {
+    //   this._getSinger(0, 20);
+    //   alert('正在努力加载...');
+    // }
   }
 };
 </script>

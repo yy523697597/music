@@ -1,10 +1,10 @@
 <template>
-    <scroll class="listview" :data="data">
+    <scroll class="listview" :data="data" @pullingUp="pullingUp" @pullingDown="pullingDown">
       <div>
         <div class="list-container">
         <ul class="list-group">
           <li v-for="(singer,index) of data" class="list-group-item" :key="index">
-            <img :src="singer.img1v1Url" class="avatar">
+            <img v-lazy="singer.img1v1Url" class="avatar">
             <span class="name">{{singer.name}}</span>
           </li>
         </ul> 
@@ -29,6 +29,14 @@ export default {
       default() {
         return [];
       }
+    }
+  },
+  methods: {
+    pullingUp() {
+      this.$emit('pullingUp');
+    },
+    pullingDown() {
+      this.$emit('pullingDown');
     }
   }
 };

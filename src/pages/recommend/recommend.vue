@@ -1,6 +1,6 @@
 <template>
   <div class="recommend">
-      <scroll ref="scroll" :data="playLists" class="recommend-content">
+      <scroll @pullingUp="pullingUp" ref="scroll" :data="playLists" class="recommend-content">
         <div>
             <div class="slider-wrapper">
               <!-- 需要有banners的数据之后再去渲染DOM,不然的话slider的宽度不对 -->
@@ -46,7 +46,9 @@ export default {
     return {
       banners: [],
       playLists: [],
-      loadedImg: false
+      loadedImg: false,
+      // 获取的全部歌单
+      allPlayLists: []
     };
   },
   components: {
@@ -71,10 +73,11 @@ export default {
     },
     // 获取推荐歌单
     _getPlaylists() {
-      const url = this.HOST + 'top/playlist';
+      const url = this.HOST + 'top/playlist?limit=200&order=hot';
       this.$http.get(url).then(res => {
         if (res.status === ERR_OK) {
-          this.playLists = res.data.playlists;
+          this.allPlayLists = res.data.playlists;
+          this.playLists = this.allPlayLists.splice(0, 10);
         }
       });
     },
@@ -89,6 +92,17 @@ export default {
       if (!this.loadedImg) {
         this.loadedImg = true;
         this.$refs.scroll.refresh();
+      }
+    },
+    // 上拉加载更多
+    pullingUp() {
+      const length = this.allPlayLists.length;
+      if (length >= 10) {
+        this.playLists = this.playLists.concat(this.allPlayLists.splice(0, 10));
+      } else if (length > 0 && length < 10) {
+        this.playLists = this.playLists.concat(
+          this.allPlayLists.splice(0, length)
+        );
       }
     }
   }

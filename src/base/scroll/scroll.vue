@@ -20,6 +20,14 @@ export default {
       default() {
         return [];
       }
+    },
+    pullUpLoad: {
+      type: Boolean,
+      default: true
+    },
+    pullDownRefresh: {
+      type: Boolean,
+      default: false
     }
   },
   mounted() {
@@ -34,7 +42,17 @@ export default {
       }
       this.scroll = new BScroll(this.$refs.wrapper, {
         probeType: this.probeType,
-        click: this.click
+        click: this.click,
+        pullUpLoad: this.pullUpLoad,
+        pullDownRefresh: this.pullDownRefresh
+      });
+
+      this.scroll.on('pullingUp', () => {
+        this.$emit('pullingUp');
+      });
+
+      this.scroll.on('pullingDown', () => {
+        this.$emit('pullingDown');
       });
     },
     enable() {
@@ -44,6 +62,8 @@ export default {
       this.scroll && this.scroll.disable();
     },
     refresh() {
+      this.scroll.finishPullDown();
+      this.scroll.finishPullUp();
       this.scroll && this.scroll.refresh();
     }
   },
@@ -51,9 +71,7 @@ export default {
   watch: {
     data() {
       this.$nextTick(() => {
-        console.log(this.data);
         this.refresh();
-        console.log(111);
       });
     }
   }
