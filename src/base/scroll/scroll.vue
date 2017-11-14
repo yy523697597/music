@@ -54,6 +54,10 @@ export default {
       this.scroll.on('pullingDown', () => {
         this.$emit('pullingDown');
       });
+
+      this.scroll.on('scroll', pos => {
+        this.$emit('scroll', pos);
+      });
     },
     enable() {
       this.scroll && this.scroll.enable();

@@ -1,0 +1,87 @@
+<template>
+<div class="song-list">
+  <ul>
+    <li class="item" v-for="(song,index) of songs" :key="index">
+        <div class="content">
+            <h2 class="name">{{song.name}}</h2>
+                <p class="desc">{{getDesc(song)}}</p>
+        </div>
+    </li>
+  </ul>
+</div>
+</template>
+<script>
+export default {
+  props: {
+    songs: {
+      type: Array,
+      default() {
+        return [];
+      }
+    }
+  },
+  created() {
+    console.log(this.songs);
+  },
+  methods: {
+    // 返回歌曲描述
+    getDesc(song) {
+      return `${song.ar[0].name} - ${song.al.name}`;
+    }
+  }
+};
+</script>
+<style lang="scss" scoped>
+@import '~common/scss/variable';
+@import '~common/scss/mixin';
+
+.song-list {
+  .item {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    height: 1.28rem;
+    font-size: $font-size-medium;
+    .rank {
+      flex: 0 0 0.5rem;
+      width: 0.5rem;
+      margin-right: 0.6rem;
+      text-align: center;
+      .icon {
+        display: inline-block;
+        width: 0.5rem;
+        height: 0.48rem;
+        background-size: 0.5rem 0.48rem;
+        &.icon0 {
+          @include bg-image('first');
+        }
+        &.icon1 {
+          @include bg-image('second');
+        }
+        &.icon2 {
+          @include bg-image('third');
+        }
+      }
+      .text {
+        color: $color-theme;
+        font-size: $font-size-large;
+      }
+    }
+
+    .content {
+      flex: 1;
+      line-height: 0.4rem;
+      overflow: hidden;
+      .name {
+        @include no-wrap();
+        color: $color-text;
+      }
+      .desc {
+        @include no-wrap();
+        margin-top: 0.08rem;
+        color: $color-text-d;
+      }
+    }
+  }
+}
+</style>

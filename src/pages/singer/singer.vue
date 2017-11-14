@@ -1,10 +1,14 @@
 <template>
   <div class="singer">
-    <listview :data="artists" @pullingUp="pullingUp" @pullingDown="pullingDown"></listview>
+    <listview :data="artists" @pullingUp="pullingUp" @pullingDown="pullingDown" @select="selectSinger"></listview>
+    <!-- 歌手详情页的子路由 -->
+    <router-view/>
   </div>
 </template>
 <script>
 import Listview from 'base/listview/listview';
+import { mapMutations } from 'vuex';
+
 export default {
   components: {
     Listview
@@ -43,12 +47,23 @@ export default {
       } else {
         alert('我是有底线的...');
       }
-    }
+    },
+    // 歌手点击事件，需要跳转到歌手详情页
+    selectSinger(singer) {
+      this.$router.push({
+        path: `/singer/${singer.id}`
+      });
+
+      this.setSinger(singer);
+    },
     // 下拉刷新
-    // pullingDown() {
-    //   this._getSinger(0, 20);
-    //   alert('正在努力加载...');
-    // }
+    pullingDown() {
+      this._getSinger(0, 20);
+      alert('正在努力加载...');
+    },
+    ...mapMutations({
+      setSinger: 'SET_SINGER'
+    })
   }
 };
 </script>

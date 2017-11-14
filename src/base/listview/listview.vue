@@ -3,9 +3,9 @@
       <div>
         <div class="list-container">
         <ul class="list-group">
-          <li v-for="(singer,index) of data" class="list-group-item" :key="index">
-            <img v-lazy="singer.img1v1Url" class="avatar">
-            <span class="name">{{singer.name}}</span>
+          <li v-for="(item,index) of data" class="list-group-item" :key="index" @click="_selectItem(item)">
+            <img v-lazy="item.img1v1Url" class="avatar">
+            <span class="name">{{item.name}}</span>
           </li>
         </ul> 
         </div>
@@ -37,6 +37,9 @@ export default {
     },
     pullingDown() {
       this.$emit('pullingDown');
+    },
+    _selectItem(item) {
+      this.$emit('select', item);
     }
   }
 };
