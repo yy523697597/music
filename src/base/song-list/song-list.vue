@@ -75,11 +75,13 @@ export default {
       .name {
         @include no-wrap();
         color: $color-text;
+        font-size: $font-size-large;
       }
       .desc {
         @include no-wrap();
         margin-top: 0.08rem;
         color: $color-text-d;
+        font-size: $font-size-large;
       }
     }
   }

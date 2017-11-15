@@ -58,15 +58,15 @@ export default {
       align-items: center;
       padding: 0.4rem 0 0 0.6rem;
       .avatar {
-        width: 1rem;
-        height: 1rem;
+        width: 1.2rem;
+        height: 1.2rem;
         border-radius: 50%;
       }
 
       .name {
         margin-left: 0.4rem;
         color: $color-text-l;
-        font-size: $font-size-medium;
+        font-size: $font-size-large;
       }
     }
   }

@@ -86,8 +86,8 @@ export default {
         align-items: center;
         padding: 0.4rem 0 0 0.6rem;
         .avatar {
-          width: 1rem;
-          height: 1rem;
+          width: 2rem;
+          height: 2rem;
           border-radius: 50%;
         }
 
