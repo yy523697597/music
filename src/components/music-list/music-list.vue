@@ -93,9 +93,13 @@ export default {
     scrollY(newY) {
       // 让layer只能滚动到距离顶部一定的距离，用于解决layer滚动过多，会重新漏出歌手头图的bug
       let translateY = Math.max(this.minHeight, newY);
+      // 蒙层的z-index
       let zIndex = 0;
+      // 下拉时图片的缩放比例
       let scale = 1;
+      // 上滑时图片的模糊参数
       let blur = 0;
+
       let percent = Math.abs(newY / this.imageHeight);
       // 向下滑动的时候放大歌手图片，向上滑动出现高斯模糊
       if (newY > 0) {
