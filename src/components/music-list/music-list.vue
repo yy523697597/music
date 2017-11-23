@@ -17,7 +17,7 @@
        <div class="bg-layer" ref="layer" :style="layerMove"></div>
        <scroll @scroll="scroll" :probe-type="probeType" :listen-scroll="listenScroll" :data="songs" class="list" ref="list">
            <div class="song-list-wrapper">
-            <song-list :songs="songs"></song-list>
+            <song-list :songs="songs" @select="selectItem"></song-list>
                 <loading v-show="!(songs.length>0)"></loading>
            </div>
        </scroll>
@@ -27,6 +27,8 @@
 import SongList from 'base/song-list/song-list';
 import Scroll from 'base/scroll/scroll';
 import Loading from 'base/loading/loading';
+import { mapActions } from 'vuex';
+
 // 歌手名字的保留高度
 const RESERVED_HEIGHT = 80;
 
@@ -75,7 +77,16 @@ export default {
     // 返回
     back() {
       this.$router.back();
-    }
+    },
+    // 歌曲点击事件
+    selectItem(item, index) {
+      this.selectPlay({
+        list: this.songs,
+        index
+      });
+    },
+    // 语法糖
+    ...mapActions(['selectPlay'])
   },
   created() {
     // scroll节流参数

@@ -1,7 +1,13 @@
+/*
+ * @Author: yu yi 
+ * @Date: 2017-11-23 10:57:10 
+ * @Last Modified by: yu yi
+ * @Last Modified time: 2017-11-23 10:59:55
+ */
 <template>
 <div class="song-list">
   <ul>
-    <li class="item" v-for="(song,index) of songs" :key="index">
+    <li class="item" v-for="(song,index) of songs" :key="index" @click="selectItem(song,index)">
         <div class="content">
             <h2 class="name">{{song.name}}</h2>
                 <p class="desc">{{getDesc(song)}}</p>
@@ -27,6 +33,11 @@ export default {
     // 返回歌曲描述
     getDesc(song) {
       return `${song.ar[0].name} - ${song.al.name}`;
+    },
+
+    // 派发点击事件
+    selectItem(item, index) {
+      this.$emit('select', item, index);
     }
   }
 };
