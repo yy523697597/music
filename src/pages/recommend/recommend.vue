@@ -114,7 +114,7 @@ export default {
 .recommend {
   position: fixed;
   width: 100%;
-  top: 1.76rem;
+  top: 1.26rem;
   bottom: 0;
   .recommend-content {
     height: 100%;
@@ -127,8 +127,8 @@ export default {
 
     .recommend-list {
       .list-title {
-        height: 1.3rem;
-        line-height: 1.3rem;
+        height: 1rem;
+        line-height: 1rem;
         text-align: center;
         font-size: $font-size-medium;
         color: $color-theme;
@@ -137,14 +137,14 @@ export default {
         display: flex;
         box-sizing: border-box;
         align-items: center;
-        padding: 0 0.4rem 0.4rem 0.4rem;
+        padding: 0 0.4rem 0.2rem 0.4rem;
         .icon {
-          flex: 0 0 1.2rem;
-          width: 1.2rem;
+          flex: 0 0 0.8rem;
+          width: 0.8rem;
           padding-right: 0.4rem;
           img {
-            width: 1.2rem;
-            height: 1.2rem;
+            width: 0.8rem;
+            height: 0.8rem;
           }
         }
         .text {
@@ -154,13 +154,15 @@ export default {
           flex: 1;
           line-height: 0.4rem;
           overflow: hidden;
-          font-size: $font-size-medium;
+          font-size: $font-size-small;
           .name {
-            margin-bottom: 0.2rem;
+            margin-bottom: 0.1rem;
             color: $color-text;
           }
           .desc {
             color: $color-text-d;
+            white-space: nowrap;
+            text-overflow: ellipsis;
           }
         }
       }

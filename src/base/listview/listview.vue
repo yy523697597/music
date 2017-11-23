@@ -56,17 +56,17 @@ export default {
     .list-group-item {
       display: flex;
       align-items: center;
-      padding: 0.4rem 0 0 0.6rem;
+      padding: 0.2rem 0 0 0.4rem;
       .avatar {
-        width: 1.2rem;
-        height: 1.2rem;
+        width: 0.8rem;
+        height: 0.8rem;
         border-radius: 50%;
       }
 
       .name {
         margin-left: 0.4rem;
         color: $color-text-l;
-        font-size: $font-size-large;
+        font-size: $font-size-medium;
       }
     }
   }

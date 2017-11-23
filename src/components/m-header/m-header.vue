@@ -13,7 +13,7 @@ export default {};
 
 .m-header {
   position: relative;
-  height: 0.88rem;
+  height: 0.44rem;
   text-align: center;
   color: $color-theme;
   font-size: 0;
@@ -21,17 +21,17 @@ export default {};
     display: inline-block;
     vertical-align: top;
     margin-top: 0.12rem;
-    width: 0.6rem;
-    height: 0.64rem;
+    width: 0.4rem;
+    height: 0.48rem;
     margin-right: 0.18rem;
     @include bg-image('logo');
-    background-size: 0.6rem 0.64rem;
+    background-size: 0.4rem 0.48rem;
   }
   .title {
     display: inline-block;
     vertical-align: top;
     line-height: 0.88rem;
-    font-size: $font-size-large;
+    font-size: $font-size-medium;
   }
   .mine {
     position: absolute;

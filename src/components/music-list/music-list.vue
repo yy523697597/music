@@ -30,7 +30,7 @@ import Loading from 'base/loading/loading';
 import { mapActions } from 'vuex';
 
 // 歌手名字的保留高度
-const RESERVED_HEIGHT = 80;
+const RESERVED_HEIGHT = 40;
 
 export default {
   props: {
@@ -193,8 +193,8 @@ export default {
       width: 100%;
       .play {
         box-sizing: border-box;
-        width: 3.4rem;
-        padding: 0.14rem 0;
+        width: 3rem;
+        padding: 0.1rem 0;
         margin: 0 auto;
         text-align: center;
         border: 1px solid $color-theme;
@@ -205,12 +205,12 @@ export default {
           display: inline-block;
           vertical-align: middle;
           margin-right: 0.12rem;
-          font-size: $font-size-large;
+          font-size: $font-size-medium;
         }
         .text {
           display: inline-block;
           vertical-align: middle;
-          font-size: $font-size-large;
+          font-size: $font-size-medium;
         }
       }
     }

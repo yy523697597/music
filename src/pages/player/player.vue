@@ -2,10 +2,10 @@
  * @Author: yu yi 
  * @Date: 2017-11-23 10:03:38 
  * @Last Modified by: yu yi
- * @Last Modified time: 2017-11-23 15:43:09
+ * @Last Modified time: 2017-11-23 17:42:18
  */
 <template>
- <div class="player" v-show="playlist.length >0">
+ <div class="player" v-if="playlist.length >0">
    <transition name="normal" @enter="enter" @after-enter="afterEnter" @leave="leave" @after-leave="afterLeave">
     <div class="normal-player" v-show="fullScreen">
       
@@ -21,8 +21,8 @@
      </div>
      <div class="middle">
        <div class="middle-l">
-         <div class="cd-wrapper" ref="cdWrapper">
-           <div class="cd"><img :src="currentSong.al.picUrl" alt="" class="image"></div>
+         <div class="cd-wrapper" ref="cdWrapper" >
+           <div class="cd" :class="cdCls"><img :src="currentSong.al.picUrl" alt="" class="image"></div>
          </div>
        </div>
      </div>
@@ -31,13 +31,13 @@
          <div class="icon i-left">
            <i class="icon-sequence"></i>
          </div>
-         <div class="icon i-left">
+         <div class="icon i-left" @click="prev">
            <i class="icon-prev"></i>
          </div>
-         <div class="icon i-center">
-           <i class="icon-play"></i>
+         <div class="icon i-center" @click="togglePlaying">
+           <i :class="playIcon"></i>
          </div>
-         <div class="icon i-right">
+         <div class="icon i-right" @click="next">
            <i class="icon-next"></i>
          </div>
          <div class="icon i-right">
@@ -49,17 +49,21 @@
    </transition>
    <transition name="mini">
       <div class="mini-player" v-show="!fullScreen" @click="open">
-        <div class="icon"><img width="80" height="80" :src="currentSong.al.picUrl"></div>
+        <div class="icon"><img width="40" height="40" :src="currentSong.al.picUrl" :class="cdCls"></div>
         <div class="text">
           <h2 class="name">{{currentSong.name}}</h2>
           <p class="desc">{{currentSong.ar[0].name}}</p>
         </div>
-        <div class="control"></div>
+        <!-- 阻止冒泡，避免打开播放器层 -->
+        <div class="control" @click.stop="togglePlaying">
+          <i :class="miniIcon"></i>
+        </div>
         <div class="control">
           <i class="icon-playlist"></i>
         </div>
       </div>
    </transition>
+   <audio :src="playUrl" ref="music"></audio>
  </div>
 </template>
 
@@ -70,10 +74,31 @@ import animations from 'create-keyframe-animation';
 export default {
   props: {},
   data() {
-    return {};
+    return {
+      // 音乐播放地址
+      playUrl: ''
+    };
   },
   computed: {
-    ...mapGetters(['fullScreen', 'playlist', 'currentSong'])
+    ...mapGetters([
+      'fullScreen',
+      'playlist',
+      'currentSong',
+      'playing',
+      'currentIndex'
+    ]),
+    // 播放按钮状态
+    playIcon() {
+      return this.playing ? 'icon-pause' : 'icon-play';
+    },
+    // mini播放器播放按钮状态
+    miniIcon() {
+      return this.playing ? 'icon-pause-mini' : 'icon-play-mini';
+    },
+    // 添加播放器旋转动画
+    cdCls() {
+      return this.playing ? 'play' : 'play pause';
+    }
   },
   methods: {
     // 收起播放器全屏
@@ -84,8 +109,37 @@ export default {
     open() {
       this.setFullScreen(true);
     },
+    // 切换歌曲播放状态
+    togglePlaying() {
+      this.setPlayingState(!this.playing);
+    },
+    // 切换上一首歌
+    prev() {
+      let index = this.currentIndex - 1;
+      if (index < 0) {
+        index = this.playlist.length - 1;
+      }
+      this.setCurrentIndex(index);
+      // 切换播放器按钮状态
+      if (!this.playing) {
+        this.togglePlaying();
+      }
+    },
+    // 切换下一首歌
+    next() {
+      let index = this.currentIndex + 1;
+      if (index === this.playlist.length) {
+        index = 0;
+      }
+      this.setCurrentIndex(index);
+      if (!this.playing) {
+        this.togglePlaying();
+      }
+    },
     ...mapMutations({
-      setFullScreen: 'SET_FULL_SCREEN'
+      setFullScreen: 'SET_FULL_SCREEN',
+      setPlayingState: 'SET_PLAYING_STATE',
+      setCurrentIndex: 'SET_CURRENT_INDEX'
     }),
     // 动画效果
     enter(el, done) {
@@ -146,11 +200,34 @@ export default {
         y,
         scale
       };
+    },
+    // 获取音乐播放地址
+    _getMusicPlayUrl(id) {
+      let url = this.HOST + `/music/url?id=${id}`;
+      this.$http.get(url).then(res => {
+        if (res.data.code === 200) {
+          this.playUrl = res.data.data[0].url;
+        }
+      });
     }
   },
   components: {},
-  created() {
-    console.log(this.currentSong);
+  created() {},
+  watch: {
+    currentSong() {
+      this._getMusicPlayUrl(this.currentSong.id);
+    },
+    playUrl() {
+      this.$nextTick(() => {
+        this.$refs.music.play();
+      });
+    },
+    playing(playingState) {
+      const music = this.$refs.music;
+      this.$nextTick(() => {
+        playingState ? music.play() : music.pause();
+      });
+    }
   }
 };
 </script>
@@ -200,14 +277,14 @@ export default {
         line-height: 0.8rem;
         text-align: center;
         @include no-wrap();
-        font-size: $font-size-large;
+        font-size: $font-size-medium;
         font-weight: bold;
         color: $color-text;
       }
       .subtitle {
         line-height: 0.4rem;
         text-align: center;
-        font-size: $font-size-medium;
+        font-size: $font-size-small;
         color: $color-text;
       }
     }
@@ -231,6 +308,7 @@ export default {
           top: 0;
           width: 80%;
           height: 100%;
+
           .cd {
             width: 100%;
             height: 100%;
@@ -238,7 +316,7 @@ export default {
             border: 0.2rem solid rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             &.play {
-              animation: rotate 20s linear infinite;
+              animation: rotate 32s linear infinite;
             }
             &.pause {
               animation-play-state: paused;
@@ -424,15 +502,13 @@ export default {
       line-height: 0.4rem;
       overflow: hidden;
       .name {
-        margin-bottom: 0.04rem;
         @include no-wrap();
-        font-size: $font-size-large;
+        font-size: $font-size-medium;
         color: $color-text;
       }
       .desc {
         @include no-wrap();
-
-        font-size: $font-size-medium;
+        font-size: $font-size-small;
         color: $color-text-d;
       }
     }
