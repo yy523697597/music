@@ -2,7 +2,7 @@
  * @Author: yu yi 
  * @Date: 2017-11-23 10:03:38 
  * @Last Modified by: yu yi
- * @Last Modified time: 2017-11-23 17:58:06
+ * @Last Modified time: 2017-11-24 16:42:26
  */
 <template>
  <div class="player" v-if="playlist.length >0">
@@ -27,6 +27,14 @@
        </div>
      </div>
      <div class="bottom">
+       <div class="progress-wrapper">
+         <span class="time time-l">{{formatTime(currentTime)}}</span>
+         <!-- 进度条 -->
+         <div class="progress-bar-wrapper">
+           <progress-bar :percent="percent" @percentChange="onProgressBarChange"></progress-bar>
+         </div>
+         <span class="time time-r">{{formatTime(currentSong.dt/1000)}}</span>
+       </div>
        <div class="operators">
          <div class="icon i-left">
            <i class="icon-sequence"></i>
@@ -56,14 +64,17 @@
         </div>
         <!-- 阻止冒泡，避免打开播放器层 -->
         <div class="control" @click.stop="togglePlaying">
-          <i :class="miniIcon"></i>
+          
+          <progress-circle>
+            <i :class="miniIcon" class="icon-mini"></i>
+          </progress-circle>
         </div>
         <div class="control">
           <i class="icon-playlist"></i>
         </div>
       </div>
    </transition>
-   <audio :src="playUrl" ref="music" @canplay="ready" @error="onError"></audio>
+   <audio :src="playUrl" ref="music" @canplay="ready" @error="onError" @timeupdate="updateTime"	@ended="next"></audio>
 
 
  </div>
@@ -72,7 +83,8 @@
 <script type="text/ecmascript-6">
 import { mapGetters, mapMutations } from 'vuex';
 import animations from 'create-keyframe-animation';
-
+import ProgressBar from 'base/progress-bar/progress-bar';
+import ProgressCircle from 'base/progress-circle/progress-circle';
 export default {
   props: {},
   data() {
@@ -80,7 +92,9 @@ export default {
       // 音乐播放地址
       playUrl: '',
       // 歌曲是否可播放
-      songReady: false
+      songReady: false,
+      // 当前播放时间
+      currentTime: 0
     };
   },
   computed: {
@@ -103,8 +117,13 @@ export default {
     cdCls() {
       return this.playing ? 'play' : 'play pause';
     },
+    // 按钮不可点击样式
     disableCls() {
       return this.songReady ? '' : 'disable';
+    },
+    // 进度条百分比
+    percent() {
+      return this.currentTime / (this.currentSong.dt / 1000);
     }
   },
   methods: {
@@ -163,6 +182,28 @@ export default {
     onError() {
       this.songReady = true;
     },
+    // 更新播放器播放时间
+    updateTime(e) {
+      this.currentTime = e.target.currentTime;
+    },
+    // 格式化时间函数
+    formatTime(interval) {
+      interval = interval | 0;
+      const minute = (interval / 60) | 0;
+      let second = interval % 60;
+
+      if (second < 10) {
+        second = '0' + second;
+      }
+      return `${minute}:${second}`;
+    },
+    onProgressBarChange(percent) {
+      // currentTiem 是一个可读可写的参数，写参数可以改播放进度
+      this.$refs.music.currentTime = percent * (this.currentSong.dt / 1000);
+      if (!this.playing) {
+        this.togglePlaying();
+      }
+    },
     // vuex设置
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
@@ -201,7 +242,7 @@ export default {
       animations.unregisterAnimation('move');
       this.$refs.cdWrapper.style.animation = '';
     },
-    // 离开动画不适用插件，直接写
+    // 离开动画不使用插件，直接写
     leave(el, done) {
       this.$refs.cdWrapper.style.transition = 'all .4s';
       const { x, y, scale } = this._getPosAndScale();
@@ -234,12 +275,16 @@ export default {
       let url = this.HOST + `/music/url?id=${id}`;
       this.$http.get(url).then(res => {
         if (res.data.code === 200) {
+          console.log(res.data.data[0]);
           this.playUrl = res.data.data[0].url;
         }
       });
     }
   },
-  components: {},
+  components: {
+    ProgressBar,
+    ProgressCircle
+  },
   created() {},
   watch: {
     currentSong() {
