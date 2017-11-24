@@ -2,7 +2,7 @@
  * @Author: yu yi 
  * @Date: 2017-11-23 10:03:38 
  * @Last Modified by: yu yi
- * @Last Modified time: 2017-11-23 17:42:18
+ * @Last Modified time: 2017-11-23 17:58:06
  */
 <template>
  <div class="player" v-if="playlist.length >0">
@@ -31,13 +31,13 @@
          <div class="icon i-left">
            <i class="icon-sequence"></i>
          </div>
-         <div class="icon i-left" @click="prev">
+         <div class="icon i-left" @click="prev" :class="disableCls">
            <i class="icon-prev"></i>
          </div>
-         <div class="icon i-center" @click="togglePlaying">
+         <div class="icon i-center" @click="togglePlaying" :class="disableCls">
            <i :class="playIcon"></i>
          </div>
-         <div class="icon i-right" @click="next">
+         <div class="icon i-right" @click="next" :class="disableCls">
            <i class="icon-next"></i>
          </div>
          <div class="icon i-right">
@@ -63,7 +63,9 @@
         </div>
       </div>
    </transition>
-   <audio :src="playUrl" ref="music"></audio>
+   <audio :src="playUrl" ref="music" @canplay="ready" @error="onError"></audio>
+
+
  </div>
 </template>
 
@@ -76,7 +78,9 @@ export default {
   data() {
     return {
       // 音乐播放地址
-      playUrl: ''
+      playUrl: '',
+      // 歌曲是否可播放
+      songReady: false
     };
   },
   computed: {
@@ -98,6 +102,9 @@ export default {
     // 添加播放器旋转动画
     cdCls() {
       return this.playing ? 'play' : 'play pause';
+    },
+    disableCls() {
+      return this.songReady ? '' : 'disable';
     }
   },
   methods: {
@@ -115,27 +122,48 @@ export default {
     },
     // 切换上一首歌
     prev() {
+      if (!this.songReady) {
+        return;
+      }
       let index = this.currentIndex - 1;
       if (index < 0) {
         index = this.playlist.length - 1;
       }
+      // 设置歌曲索引
       this.setCurrentIndex(index);
       // 切换播放器按钮状态
       if (!this.playing) {
         this.togglePlaying();
       }
+      // 更改歌曲ready状态
+      this.songReady = false;
     },
     // 切换下一首歌
     next() {
+      if (!this.songReady) {
+        return;
+      }
       let index = this.currentIndex + 1;
       if (index === this.playlist.length) {
         index = 0;
       }
+
       this.setCurrentIndex(index);
       if (!this.playing) {
         this.togglePlaying();
       }
+      this.songReady = false;
     },
+    // 歌曲缓冲好可以播了
+    ready() {
+      this.songReady = true;
+      this.$refs.music.play();
+    },
+    // 歌曲缓冲出错
+    onError() {
+      this.songReady = true;
+    },
+    // vuex设置
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
       setPlayingState: 'SET_PLAYING_STATE',
@@ -217,15 +245,13 @@ export default {
     currentSong() {
       this._getMusicPlayUrl(this.currentSong.id);
     },
-    playUrl() {
-      this.$nextTick(() => {
-        this.$refs.music.play();
-      });
-    },
-    playing(playingState) {
+    playing() {
       const music = this.$refs.music;
       this.$nextTick(() => {
-        playingState ? music.play() : music.pause();
+        // 歌曲准备好之后，才能播放和暂停
+        if (this.songReady) {
+          this.playing ? music.play() : music.pause();
+        }
       });
     }
   }
