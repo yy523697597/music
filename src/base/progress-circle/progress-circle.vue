@@ -11,9 +11,29 @@
 
 <script type="text/ecmascript-6">
 export default {
-  props: {},
+  props: {
+    // svg圆圈半径
+    radius: {
+      type: Number,
+      default: 32
+    },
+    // 已经播放的时间占比
+    percent: {
+      type: Number,
+      default: 0
+    }
+  },
   data() {
-    return {};
+    return {
+      // 圆圈周长
+      dashArray: Math.PI * 100
+    };
+  },
+  computed: {
+    // 未播放的圆周长
+    dashOffset() {
+      return (1 - this.percent) * this.dashArray;
+    }
   },
   methods: {},
   components: {},

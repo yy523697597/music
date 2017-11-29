@@ -5,57 +5,57 @@
  * @Last Modified time: 2017-11-24 16:42:26
  */
 <template>
- <div class="player" v-if="playlist.length >0">
-   <transition name="normal" @enter="enter" @after-enter="afterEnter" @leave="leave" @after-leave="afterLeave">
-    <div class="normal-player" v-show="fullScreen">
-      
-     <div class="background">
-       <img width="100%" height="100%" :src="currentSong.al.picUrl">
-     </div>
-     <div class="top">
-       <div class="back" @click="back">
-         <i class="icon-back"></i>
-       </div>
-       <h1 class="title">{{currentSong.name}}</h1>
-       <h2 class="subtitle">{{currentSong.ar[0].name}}</h2>
-     </div>
-     <div class="middle">
-       <div class="middle-l">
-         <div class="cd-wrapper" ref="cdWrapper" >
-           <div class="cd" :class="cdCls"><img :src="currentSong.al.picUrl" alt="" class="image"></div>
-         </div>
-       </div>
-     </div>
-     <div class="bottom">
-       <div class="progress-wrapper">
-         <span class="time time-l">{{formatTime(currentTime)}}</span>
-         <!-- 进度条 -->
-         <div class="progress-bar-wrapper">
-           <progress-bar :percent="percent" @percentChange="onProgressBarChange"></progress-bar>
-         </div>
-         <span class="time time-r">{{formatTime(currentSong.dt/1000)}}</span>
-       </div>
-       <div class="operators">
-         <div class="icon i-left">
-           <i class="icon-sequence"></i>
-         </div>
-         <div class="icon i-left" @click="prev" :class="disableCls">
-           <i class="icon-prev"></i>
-         </div>
-         <div class="icon i-center" @click="togglePlaying" :class="disableCls">
-           <i :class="playIcon"></i>
-         </div>
-         <div class="icon i-right" @click="next" :class="disableCls">
-           <i class="icon-next"></i>
-         </div>
-         <div class="icon i-right">
-           <i class="icon icon-not-favorite"></i>
-         </div>
-       </div>
-     </div>
-    </div>
-   </transition>
-   <transition name="mini">
+  <div class="player" v-if="playlist.length >0">
+    <transition name="normal" @enter="enter" @after-enter="afterEnter" @leave="leave" @after-leave="afterLeave">
+      <div class="normal-player" v-show="fullScreen">
+
+        <div class="background">
+          <img width="100%" height="100%" :src="currentSong.al.picUrl">
+        </div>
+        <div class="top">
+          <div class="back" @click="back">
+            <i class="icon-back"></i>
+          </div>
+          <h1 class="title">{{currentSong.name}}</h1>
+          <h2 class="subtitle">{{currentSong.ar[0].name}}</h2>
+        </div>
+        <div class="middle">
+          <div class="middle-l">
+            <div class="cd-wrapper" ref="cdWrapper">
+              <div class="cd" :class="cdCls"><img :src="currentSong.al.picUrl" alt="" class="image"></div>
+            </div>
+          </div>
+        </div>
+        <div class="bottom">
+          <div class="progress-wrapper">
+            <span class="time time-l">{{formatTime(currentTime)}}</span>
+            <!-- 进度条 -->
+            <div class="progress-bar-wrapper">
+              <progress-bar :percent="percent" @percentChange="onProgressBarChange"></progress-bar>
+            </div>
+            <span class="time time-r">{{formatTime(currentSong.dt/1000)}}</span>
+          </div>
+          <div class="operators">
+            <div class="icon i-left">
+              <i class="icon-sequence"></i>
+            </div>
+            <div class="icon i-left" @click="prev" :class="disableCls">
+              <i class="icon-prev"></i>
+            </div>
+            <div class="icon i-center" @click="togglePlaying" :class="disableCls">
+              <i :class="playIcon"></i>
+            </div>
+            <div class="icon i-right" @click="next" :class="disableCls">
+              <i class="icon-next"></i>
+            </div>
+            <div class="icon i-right">
+              <i class="icon icon-not-favorite"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+    <transition name="mini">
       <div class="mini-player" v-show="!fullScreen" @click="open">
         <div class="icon"><img width="40" height="40" :src="currentSong.al.picUrl" :class="cdCls"></div>
         <div class="text">
@@ -64,8 +64,8 @@
         </div>
         <!-- 阻止冒泡，避免打开播放器层 -->
         <div class="control" @click.stop="togglePlaying">
-          
-          <progress-circle>
+
+          <progress-circle :radius=32 :percent="percent">
             <i :class="miniIcon" class="icon-mini"></i>
           </progress-circle>
         </div>
@@ -73,11 +73,10 @@
           <i class="icon-playlist"></i>
         </div>
       </div>
-   </transition>
-   <audio :src="playUrl" ref="music" @canplay="ready" @error="onError" @timeupdate="updateTime"	@ended="next"></audio>
+    </transition>
+    <audio :src="playUrl" ref="music" @canplay="ready" @error="onError" @timeupdate="updateTime" @ended="next"></audio>
 
-
- </div>
+  </div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -275,7 +274,6 @@ export default {
       let url = this.HOST + `/music/url?id=${id}`;
       this.$http.get(url).then(res => {
         if (res.data.code === 200) {
-          console.log(res.data.data[0]);
           this.playUrl = res.data.data[0].url;
         }
       });
@@ -596,8 +594,8 @@ export default {
       .icon-mini {
         font-size: 0.64rem;
         position: absolute;
-        left: 0;
-        top: 0;
+        left: -0.02rem;
+        top: 0.2rem;
       }
     }
   }
