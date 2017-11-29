@@ -1,28 +1,30 @@
  <template>
-   <div class="music-list">
-       <div class="back" @click="back"><i class="icon-back"></i></div>
-       <h1 class="title">{{title}}</h1>
-       <div class="bg-image" :style="bgStyle" ref="bgImage">
-         <!-- 播放按钮 -->
-         <div class="play-wrapper" v-show="songs.length>0" ref="playBtn">
-           <div class="play">
-             <i class="icon-play"></i>
-             <span class="text">随机播放全部</span>
-           </div>
-         </div>
-           <!-- 歌手图片遮罩层 -->
-           <div class="filter" ref="filter"></div>
-       </div>
-       <!-- 滚动阴影层 -->
-       <div class="bg-layer" ref="layer" :style="layerMove"></div>
-       <scroll @scroll="scroll" :probe-type="probeType" :listen-scroll="listenScroll" :data="songs" class="list" ref="list">
-           <div class="song-list-wrapper">
-            <song-list :songs="songs" @select="selectItem"></song-list>
-                <loading v-show="!(songs.length>0)"></loading>
-           </div>
-       </scroll>
-   </div>
- </template>
+  <div class="music-list">
+    <div class="back" @click="back">
+      <i class="icon-back"></i>
+    </div>
+    <h1 class="title">{{title}}</h1>
+    <div class="bg-image" :style="bgStyle" ref="bgImage">
+      <!-- 播放按钮 -->
+      <div class="play-wrapper" v-show="songs.length>0" ref="playBtn">
+        <div class="play" @click="random">
+          <i class="icon-play"></i>
+          <span class="text">随机播放全部</span>
+        </div>
+      </div>
+      <!-- 歌手图片遮罩层 -->
+      <div class="filter" ref="filter"></div>
+    </div>
+    <!-- 滚动阴影层 -->
+    <div class="bg-layer" ref="layer" :style="layerMove"></div>
+    <scroll @scroll="scroll" :probe-type="probeType" :listen-scroll="listenScroll" :data="songs" class="list" ref="list">
+      <div class="song-list-wrapper">
+        <song-list :songs="songs" @select="selectItem"></song-list>
+        <loading v-show="!(songs.length>0)"></loading>
+      </div>
+    </scroll>
+  </div>
+</template>
  <script>
 import SongList from 'base/song-list/song-list';
 import Scroll from 'base/scroll/scroll';
@@ -85,8 +87,14 @@ export default {
         index
       });
     },
+    // 随机播放所有歌曲
+    random() {
+      this.randomPlay({
+        list: this.songs
+      });
+    },
     // 语法糖
-    ...mapActions(['selectPlay'])
+    ...mapActions(['selectPlay', 'randomPlay'])
   },
   created() {
     // scroll节流参数

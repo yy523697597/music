@@ -2,19 +2,17 @@
  * @Author: yu yi 
  * @Date: 2017-11-24 15:04:11 
  * @Last Modified by: yu yi
- * @Last Modified time: 2017-11-24 16:08:38
+ * @Last Modified time: 2017-11-29 15:02:49
  */
 <template>
- <div class="progress-bar" ref="progressBar" @click="progressClick">
-   <div class="bar-inner">
-     <div class="progress" ref="progress" ></div>
-     <div class="progress-btn-wrapper" ref="progressBtn" 
-      @touchstart.prevent="progressTouchStart" @touchmove.prevent="progressTouchMove" @touchend="progressTouchEnd"
-     >
-       <div class="progress-btn"></div>
-     </div>
-   </div>
- </div>
+  <div class="progress-bar" ref="progressBar" @click="progressClick">
+    <div class="bar-inner">
+      <div class="progress" ref="progress"></div>
+      <div class="progress-btn-wrapper" ref="progressBtn" @touchstart.prevent="progressTouchStart" @touchmove.prevent="progressTouchMove" @touchend="progressTouchEnd">
+        <div class="progress-btn"></div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -78,7 +76,11 @@ export default {
     },
     // 进度条点击事件
     progressClick(e) {
-      this._offset(e.offsetX);
+      // 点击progressBtn的时候，e.offsetX获取不对
+      // this._offset(e.offsetX);
+      const rect = this.$refs.progressBar.getBoundingClientRect();
+      const offsetWidth = e.pageX - rect.left;
+      this._offset(offsetWidth);
       this._triggerPercent();
     }
   },

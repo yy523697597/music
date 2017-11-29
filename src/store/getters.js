@@ -2,7 +2,7 @@
  * @Author: yu yi
  * @Date: 2017-11-22 17:31:57
  * @Last Modified by: yu yi
- * @Last Modified time: 2017-11-22 17:34:22
+ * @Last Modified time: 2017-11-29 13:51:47
  */
 export const singer = state => state.singer;
 

@@ -2,7 +2,7 @@
  * @Author: yu yi 
  * @Date: 2017-11-23 10:03:38 
  * @Last Modified by: yu yi
- * @Last Modified time: 2017-11-24 16:42:26
+ * @Last Modified time: 2017-11-29 16:48:49
  */
 <template>
   <div class="player" v-if="playlist.length >0">
@@ -25,6 +25,13 @@
               <div class="cd" :class="cdCls"><img :src="currentSong.al.picUrl" alt="" class="image"></div>
             </div>
           </div>
+          <scroll class="middle-r" ref="lyricList" :data="currentLyric && currentLyric.lines">
+            <div class="lyric-wrapper">
+              <div v-if="currentLyric">
+                <p class="text" ref="lyricLine" :class="{'current':currentLineNum===index}" v-for="(line,index) of currentLyric.lines" :key="index">{{line.txt}}</p>
+              </div>
+            </div>
+          </scroll>
         </div>
         <div class="bottom">
           <div class="progress-wrapper">
@@ -36,8 +43,8 @@
             <span class="time time-r">{{formatTime(currentSong.dt/1000)}}</span>
           </div>
           <div class="operators">
-            <div class="icon i-left">
-              <i class="icon-sequence"></i>
+            <div class="icon i-left" @click="changeMode">
+              <i :class="iconMode"></i>
             </div>
             <div class="icon i-left" @click="prev" :class="disableCls">
               <i class="icon-prev"></i>
@@ -74,7 +81,7 @@
         </div>
       </div>
     </transition>
-    <audio :src="playUrl" ref="music" @canplay="ready" @error="onError" @timeupdate="updateTime" @ended="next"></audio>
+    <audio :src="playUrl" ref="music" @canplay="ready" @error="onError" @timeupdate="updateTime" @ended="musicEnd"></audio>
 
   </div>
 </template>
@@ -84,6 +91,11 @@ import { mapGetters, mapMutations } from 'vuex';
 import animations from 'create-keyframe-animation';
 import ProgressBar from 'base/progress-bar/progress-bar';
 import ProgressCircle from 'base/progress-circle/progress-circle';
+import { playMode } from 'common/js/config.js';
+import { shuffle } from 'common/js/util.js';
+import Lyric from 'lyric-parser';
+import Scroll from 'base/scroll/scroll';
+
 export default {
   props: {},
   data() {
@@ -93,7 +105,13 @@ export default {
       // 歌曲是否可播放
       songReady: false,
       // 当前播放时间
-      currentTime: 0
+      currentTime: 0,
+      // 歌词存储对象
+      lyric: {},
+      // 当前歌曲的歌词
+      currentLyric: {},
+      // 当前歌词行
+      currentLineNum: 0
     };
   },
   computed: {
@@ -102,7 +120,9 @@ export default {
       'playlist',
       'currentSong',
       'playing',
-      'currentIndex'
+      'currentIndex',
+      'playMode',
+      'sequenceList'
     ]),
     // 播放按钮状态
     playIcon() {
@@ -111,6 +131,12 @@ export default {
     // mini播放器播放按钮状态
     miniIcon() {
       return this.playing ? 'icon-pause-mini' : 'icon-play-mini';
+    },
+    // 播放模式图标
+    iconMode() {
+      return this.playMode === playMode.sequence
+        ? 'icon-sequence'
+        : this.playMode === playMode.loop ? 'icon-loop' : 'icon-random';
     },
     // 添加播放器旋转动画
     cdCls() {
@@ -172,6 +198,11 @@ export default {
       }
       this.songReady = false;
     },
+    // 单曲循环播放歌曲
+    loop() {
+      this.$refs.music.currentTime = 0;
+      this.$refs.music.play();
+    },
     // 歌曲缓冲好可以播了
     ready() {
       this.songReady = true;
@@ -180,6 +211,15 @@ export default {
     // 歌曲缓冲出错
     onError() {
       this.songReady = true;
+    },
+    // 监听音乐播放完成事件
+    musicEnd() {
+      // 如果是单曲循环模式，就重新播放这首歌曲
+      if (this.playMode === playMode.loop) {
+        this.loop();
+      } else {
+        this.next();
+      }
     },
     // 更新播放器播放时间
     updateTime(e) {
@@ -203,11 +243,39 @@ export default {
         this.togglePlaying();
       }
     },
+    // 切换播放模式
+    changeMode() {
+      // mode 依 0 1 2 循环
+      const mode = (this.playMode + 1) % 3;
+      // 设置播放模式
+      this.setPlayMode(mode);
+
+      let list = null;
+      // 随机播放
+      if (mode === playMode.random) {
+        // 打乱播放列表
+        list = shuffle(this.sequenceList);
+      } else {
+        list = this.sequenceList;
+      }
+      this.resetCurrentIndex(list);
+      // 设置播放列表
+      this.setPlaylist(list);
+    },
+    // 切换播放模式时，不切换当前正在播放的歌曲
+    resetCurrentIndex(list) {
+      let index = list.findIndex(item => {
+        return item.id === this.currentSong.id;
+      });
+      this.setCurrentIndex(index);
+    },
     // vuex设置
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
       setPlayingState: 'SET_PLAYING_STATE',
-      setCurrentIndex: 'SET_CURRENT_INDEX'
+      setCurrentIndex: 'SET_CURRENT_INDEX',
+      setPlayMode: 'SET_PLAY_MODE',
+      setPlaylist: 'SET_PLAYLIST'
     }),
     // 动画效果
     enter(el, done) {
@@ -277,16 +345,48 @@ export default {
           this.playUrl = res.data.data[0].url;
         }
       });
+    },
+    changeLyric(lineNum, text) {
+      this.currentLineNum = lineNum;
+    },
+    // 处理歌词
+    _handleLyric() {
+      this._getLyric().then(lyric => {
+        this.currentLyric = new Lyric(lyric, this.changeLyric);
+        if (this.playing) {
+          // 播放歌词
+          this.currentLyric.play();
+        }
+      });
+    },
+    // 获取歌曲歌词
+    _getLyric() {
+      // 使用歌词对象存储已经获取的歌词
+      if (this.lyric[this.currentSong.id]) {
+        return Promise.resolve(this.lyric[this.currentSong.id]);
+      }
+      // 获取歌词
+      return new Promise((resolve, reject) => {
+        const lyricUrl = `${this.HOST}/lyric?id=${this.currentSong.id}`;
+
+        this.$http.get(lyricUrl).then(res => {
+          resolve(res.data.lrc.lyric);
+          this.lyric[this.currentSong.id] = res.data.lrc.lyric;
+        });
+      });
     }
   },
+
   components: {
     ProgressBar,
-    ProgressCircle
+    ProgressCircle,
+    Scroll
   },
   created() {},
   watch: {
     currentSong() {
       this._getMusicPlayUrl(this.currentSong.id);
+      this._handleLyric();
     },
     playing() {
       const music = this.$refs.music;
