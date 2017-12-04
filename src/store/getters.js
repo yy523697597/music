@@ -2,7 +2,7 @@
  * @Author: yu yi
  * @Date: 2017-11-22 17:31:57
  * @Last Modified by: yu yi
- * @Last Modified time: 2017-11-29 13:51:47
+ * @Last Modified time: 2017-12-04 15:20:39
  */
 export const singer = state => state.singer;
 
@@ -21,3 +21,5 @@ export const currentIndex = state => state.currentIndex;
 export const currentSong = state => {
   return state.playlist[state.currentIndex];
 };
+
+export const songMenu = state => state.songMenu;

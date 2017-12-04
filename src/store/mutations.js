@@ -1,8 +1,8 @@
 /*
  * @Author: yu yi
  * @Date: 2017-11-22 17:43:44
- * @Last Modified by:   yu yi
- * @Last Modified time: 2017-11-22 17:43:44
+ * @Last Modified by: yu yi
+ * @Last Modified time: 2017-12-04 15:18:40
  */
 import * as types from './mutation-types';
 
@@ -27,6 +27,9 @@ const mutations = {
   },
   [types.SET_CURRENT_INDEX](state, index) {
     state.currentIndex = index;
+  },
+  [types.SET_SONG_MENU](state, songMenu) {
+    state.songMenu = songMenu;
   }
 };
 export default mutations;

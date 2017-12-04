@@ -17,7 +17,7 @@
         <div class="recommend-list">
           <h1 class="list-title">热门歌单推荐</h1>
           <ul>
-            <li class="item" v-for="(item,index) of playLists" :key="index">
+            <li class="item" v-for="(item,index) of playLists" :key="index" @click="selectItem(item)">
               <div class="icon">
                 <img v-lazy="item.coverImgUrl">
               </div>
@@ -33,6 +33,8 @@
         <loading></loading>
       </div>
     </scroll>
+    <!-- 歌单详情页面路由 -->
+    <router-view></router-view>
   </div>
 </template>
 <script>
@@ -41,6 +43,7 @@ import Slider from 'base/slider/slider';
 import Scroll from 'base/scroll/scroll';
 import Loading from 'base/loading/loading';
 import { playlistMixin } from 'common/js/mixin';
+import { mapMutations } from 'vuex';
 
 export default {
   mixins: [playlistMixin],
@@ -63,6 +66,14 @@ export default {
     this._getPlaylists();
   },
   methods: {
+    // 歌单列表点击事件
+    selectItem(item) {
+      this.$router.push({
+        path: `/recommend/${item.id}`
+      });
+
+      this.setSongMenu(item);
+    },
     // 监听是否有播放列表，即是否有mini播放器，调整scroll的底部高度，避免内容被mini播放器覆盖
     handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? '1.2rem' : '';
@@ -114,7 +125,10 @@ export default {
           this.allPlayLists.splice(0, length)
         );
       }
-    }
+    },
+    ...mapMutations({
+      setSongMenu: 'SET_SONG_MENU'
+    })
   }
 };
 </script>

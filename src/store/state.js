@@ -2,7 +2,7 @@
  * @Author: yu yi
  * @Date: 2017-11-22 17:23:23
  * @Last Modified by: yu yi
- * @Last Modified time: 2017-11-22 17:35:17
+ * @Last Modified time: 2017-12-04 15:19:30
  */
 
 import { playMode } from 'common/js/config.js';
@@ -21,7 +21,9 @@ const state = {
   // 当前播放模式
   playMode: playMode.sequence,
   // 当前播放歌曲索引
-  currentIndex: -1
+  currentIndex: -1,
+  // 歌单对象
+  songMenu: {}
 };
 
 export default state;
