@@ -1,38 +1,38 @@
 <template>
-  <div class="recommend">
-      <scroll @pullingUp="pullingUp" ref="scroll" :data="playLists" class="recommend-content">
-        <div>
-            <div class="slider-wrapper">
-              <!-- 需要有banners的数据之后再去渲染DOM,不然的话slider的宽度不对 -->
-              <slider v-if="banners.length">
-                <div v-for="(item,index) of banners" :key="index">
-                  <div @click="_bannerClick(item.typeTitle,item.url)">
-                    <!-- 监听图片的load事件用于初始化scroll，添加needsclick类名用于解决fastclick和better-scroll的冲突 -->
-                    <img class="needsclick" @load="loadImg" :src="item.pic">
-                  </div>
-                  <span class="type">{{item.typeTitle}}</span>
-                </div>
-              </slider>
+  <div class="recommend" ref="recommend">
+    <scroll @pullingUp="pullingUp" ref="scroll" :data="playLists" class="recommend-content">
+      <div>
+        <div class="slider-wrapper">
+          <!-- 需要有banners的数据之后再去渲染DOM,不然的话slider的宽度不对 -->
+          <slider v-if="banners.length">
+            <div v-for="(item,index) of banners" :key="index">
+              <div @click="_bannerClick(item.typeTitle,item.url)">
+                <!-- 监听图片的load事件用于初始化scroll，添加needsclick类名用于解决fastclick和better-scroll的冲突 -->
+                <img class="needsclick" @load="loadImg" :src="item.pic">
+              </div>
+              <span class="type">{{item.typeTitle}}</span>
             </div>
-            <div class="recommend-list">
-              <h1 class="list-title">热门歌单推荐</h1>
-              <ul>
-                <li class="item" v-for="(item,index) of playLists" :key="index">
-                  <div class="icon">
-                    <img v-lazy="item.coverImgUrl" >
-                  </div>
-                  <div class="text">
-                    <h2 class="name">{{item.creator.nickname}}</h2>
-                    <p class="desc">{{item.name}}</p>
-                  </div>
-                </li>
-              </ul>
-            </div>
+          </slider>
         </div>
-         <div class="loading-container" v-show="!playLists.length">
-            <loading></loading>
+        <div class="recommend-list">
+          <h1 class="list-title">热门歌单推荐</h1>
+          <ul>
+            <li class="item" v-for="(item,index) of playLists" :key="index">
+              <div class="icon">
+                <img v-lazy="item.coverImgUrl">
+              </div>
+              <div class="text">
+                <h2 class="name">{{item.creator.nickname}}</h2>
+                <p class="desc">{{item.name}}</p>
+              </div>
+            </li>
+          </ul>
         </div>
-      </scroll>
+      </div>
+      <div class="loading-container" v-show="!playLists.length">
+        <loading></loading>
+      </div>
+    </scroll>
   </div>
 </template>
 <script>
@@ -40,8 +40,10 @@ import { ERR_OK } from 'api/config';
 import Slider from 'base/slider/slider';
 import Scroll from 'base/scroll/scroll';
 import Loading from 'base/loading/loading';
+import { playlistMixin } from 'common/js/mixin';
 
 export default {
+  mixins: [playlistMixin],
   data() {
     return {
       banners: [],
@@ -61,6 +63,14 @@ export default {
     this._getPlaylists();
   },
   methods: {
+    // 监听是否有播放列表，即是否有mini播放器，调整scroll的底部高度，避免内容被mini播放器覆盖
+    handlePlaylist(playlist) {
+      const bottom = playlist.length > 0 ? '1.2rem' : '';
+      this.$refs.recommend.style.bottom = bottom;
+      this.$nextTick(() => {
+        this.$refs.scroll.refresh();
+      });
+    },
     // 获取banner数据
     _getBanners() {
       // 获取banner数据

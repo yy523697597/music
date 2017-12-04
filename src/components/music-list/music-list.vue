@@ -30,11 +30,12 @@ import SongList from 'base/song-list/song-list';
 import Scroll from 'base/scroll/scroll';
 import Loading from 'base/loading/loading';
 import { mapActions } from 'vuex';
-
+import { playlistMixin } from 'common/js/mixin';
 // 歌手名字的保留高度
 const RESERVED_HEIGHT = 40;
 
 export default {
+  mixins: [playlistMixin],
   props: {
     bgImage: {
       type: String,
@@ -73,6 +74,14 @@ export default {
     Loading
   },
   methods: {
+    // 监听是否有播放列表，即是否有mini播放器，调整scroll的底部高度，避免内容被mini播放器覆盖
+    handlePlaylist(playlist) {
+      const bottom = playlist.length > 0 ? '.7rem' : '';
+      this.$refs.list.$el.style.bottom = bottom;
+      this.$nextTick(() => {
+        this.$refs.list.refresh();
+      });
+    },
     scroll(pos) {
       this.scrollY = pos.y;
     },

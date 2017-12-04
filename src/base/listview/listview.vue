@@ -1,19 +1,19 @@
 <template>
-    <scroll class="listview" :data="data" @pullingUp="pullingUp" @pullingDown="pullingDown">
-      <div>
-        <div class="list-container">
+  <scroll class="listview" :data="data" @pullingUp="pullingUp" @pullingDown="pullingDown" ref="listview">
+    <div>
+      <div class="list-container">
         <ul class="list-group">
           <li v-for="(item,index) of data" class="list-group-item" :key="index" @click="_selectItem(item)">
             <img v-lazy="item.img1v1Url" class="avatar">
             <span class="name">{{item.name}}</span>
           </li>
-        </ul> 
-        </div>
+        </ul>
       </div>
-      <div class="loading-container" v-show="!data.length">
-        <loading></loading>
-      </div>
-    </scroll>
+    </div>
+    <div class="loading-container" v-show="!data.length">
+      <loading></loading>
+    </div>
+  </scroll>
 </template>
 <script>
 import Scroll from 'base/scroll/scroll';
@@ -40,6 +40,9 @@ export default {
     },
     _selectItem(item) {
       this.$emit('select', item);
+    },
+    refresh() {
+      this.$refs.listview.refresh();
     }
   }
 };

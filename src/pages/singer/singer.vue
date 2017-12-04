@@ -1,6 +1,6 @@
 <template>
-  <div class="singer">
-    <listview :data="artists" @pullingUp="pullingUp" @pullingDown="pullingDown" @select="selectSinger"></listview>
+  <div class="singer" ref="singer">
+    <listview :data="artists" @pullingUp="pullingUp" @pullingDown="pullingDown" @select="selectSinger" ref="singerList"></listview>
     <!-- 歌手详情页的子路由 -->
     <router-view/>
   </div>
@@ -8,8 +8,10 @@
 <script>
 import Listview from 'base/listview/listview';
 import { mapMutations } from 'vuex';
+import { playlistMixin } from 'common/js/mixin';
 
 export default {
+  mixins: [playlistMixin],
   components: {
     Listview
   },
@@ -27,6 +29,14 @@ export default {
     this._getSinger(this.offset, this.limit);
   },
   methods: {
+    // 监听是否有播放列表，即是否有mini播放器，调整scroll的底部高度，避免内容被mini播放器覆盖
+    handlePlaylist(playlist) {
+      const bottom = playlist.length > 0 ? '.7rem' : '';
+      this.$refs.singer.style.bottom = bottom;
+      this.$nextTick(() => {
+        this.$refs.singerList.refresh();
+      });
+    },
     // offset 起始位置
     // limit 获取数量
     _getSinger(offset, limit) {

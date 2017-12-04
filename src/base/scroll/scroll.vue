@@ -1,6 +1,6 @@
 <template>
   <div ref="wrapper">
-      <slot></slot>
+    <slot></slot>
   </div>
 </template>
 <script>
@@ -69,6 +69,12 @@ export default {
       this.scroll.finishPullDown();
       this.scroll.finishPullUp();
       this.scroll && this.scroll.refresh();
+    },
+    scrollTo(x, y, timer) {
+      this.scroll && this.scroll.scrollTo(x, y, timer);
+    },
+    scrollToElement(el, timer) {
+      this.scroll && this.scroll.scrollToElement(el, timer);
     }
   },
   // 追踪传入的data的变化,data变化后就刷新scroll
