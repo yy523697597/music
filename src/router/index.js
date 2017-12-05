@@ -7,6 +7,8 @@ import Rank from 'pages/rank/rank';
 import Search from 'pages/search/search';
 import SingerDetail from 'components/singer-detail/singer-detail';
 import SongMenu from 'components/song-menu/song-menu';
+import TopList from 'components/top-list/top-list';
+
 Vue.use(Router);
 
 export default new Router({
@@ -43,7 +45,14 @@ export default new Router({
     },
     {
       path: '/rank',
-      component: Rank
+      component: Rank,
+      // 子路由
+      children: [
+        {
+          path: ':id',
+          component: TopList
+        }
+      ]
     }
   ]
 });

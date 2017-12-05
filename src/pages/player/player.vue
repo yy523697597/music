@@ -2,7 +2,7 @@
  * @Author: yu yi 
  * @Date: 2017-11-23 10:03:38 
  * @Last Modified by: yu yi
- * @Last Modified time: 2017-12-04 14:50:30
+ * @Last Modified time: 2017-12-05 10:40:46
  */
 <template>
   <div class="player" v-if="playlist.length >0">
@@ -466,7 +466,7 @@ export default {
       let offsetWidth, opacity;
 
       if (this.currentShow === 'cd') {
-        if (this.touch.percent > 0.1) {
+        if (this.touch.percent > 0.3) {
           offsetWidth = -window.innerWidth;
           this.currentShow = 'lyric';
           opacity = 0;
@@ -824,8 +824,8 @@ export default {
       .icon-mini {
         font-size: 0.64rem;
         position: absolute;
-        left: -0.02rem;
-        top: 0.2rem;
+        left: 0.02rem;
+        top: 0.18rem;
       }
     }
   }

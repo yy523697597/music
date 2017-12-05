@@ -59,10 +59,10 @@ export default {
     .list-group-item {
       display: flex;
       align-items: center;
-      padding: 0.2rem 0 0 0.4rem;
+      padding: 0.3rem 0 0 0.3rem;
       .avatar {
-        width: 0.8rem;
-        height: 0.8rem;
+        width: 1.08rem;
+        height: 1.08rem;
         border-radius: 50%;
       }
 

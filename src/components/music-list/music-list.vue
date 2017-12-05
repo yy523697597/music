@@ -19,7 +19,7 @@
     <div class="bg-layer" ref="layer" :style="layerMove"></div>
     <scroll @scroll="scroll" :probe-type="probeType" :listen-scroll="listenScroll" :data="songs" class="list" ref="list">
       <div class="song-list-wrapper">
-        <song-list :songs="songs" @select="selectItem"></song-list>
+        <song-list :songs="songs" @select="selectItem" :rank="rank"></song-list>
         <loading v-show="!(songs.length>0)"></loading>
       </div>
     </scroll>
@@ -50,6 +50,10 @@ export default {
     title: {
       type: String,
       default: ''
+    },
+    rank: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

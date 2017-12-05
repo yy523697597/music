@@ -2,7 +2,7 @@
  * @Author: yu yi
  * @Date: 2017-11-22 17:23:23
  * @Last Modified by: yu yi
- * @Last Modified time: 2017-12-04 15:19:30
+ * @Last Modified time: 2017-12-05 09:35:00
  */
 
 import { playMode } from 'common/js/config.js';
@@ -23,7 +23,9 @@ const state = {
   // 当前播放歌曲索引
   currentIndex: -1,
   // 歌单对象
-  songMenu: {}
+  songMenu: {},
+  // 排行榜歌单对象
+  topList: {}
 };
 
 export default state;
