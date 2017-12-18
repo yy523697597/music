@@ -30,7 +30,14 @@ export default new Router({
     },
     {
       path: '/search',
-      component: Search
+      component: Search,
+      // 子路由
+      children: [
+        {
+          path: ':id',
+          component: SingerDetail
+        }
+      ]
     },
     {
       path: '/recommend',

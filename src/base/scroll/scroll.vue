@@ -28,6 +28,10 @@ export default {
     pullDownRefresh: {
       type: Boolean,
       default: false
+    },
+    beforeScroll: {
+      type: Boolean,
+      default: false
     }
   },
   mounted() {
@@ -58,6 +62,12 @@ export default {
       this.scroll.on('scroll', pos => {
         this.$emit('scroll', pos);
       });
+
+      if (this.beforeScroll) {
+        this.scroll.on('beforeScrollStart', () => {
+          this.$emit('beforeScroll');
+        });
+      }
     },
     enable() {
       this.scroll && this.scroll.enable();

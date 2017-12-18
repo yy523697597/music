@@ -2,10 +2,11 @@
  * @Author: yu yi
  * @Date: 2017-11-22 17:23:23
  * @Last Modified by: yu yi
- * @Last Modified time: 2017-12-05 09:35:00
+ * @Last Modified time: 2017-12-14 10:09:01
  */
 
 import { playMode } from 'common/js/config.js';
+import { loadSearch } from 'common/js/cache.js';
 
 const state = {
   // 歌手数据
@@ -25,7 +26,9 @@ const state = {
   // 歌单对象
   songMenu: {},
   // 排行榜歌单对象
-  topList: {}
+  topList: {},
+  // 搜索历史
+  searchHistory: loadSearch()
 };
 
 export default state;
