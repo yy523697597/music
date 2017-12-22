@@ -25,7 +25,7 @@
               <i class="icon-clear"></i>
             </span>
           </h1>
-          <search-list :searches="searchHistory"></search-list>
+          <search-list :searches="searchHistory" @selectSearch="addQuery" @deletSearch="deletSearch"></search-list>
         </div>
       </scroll>
     </div>
@@ -88,7 +88,11 @@ export default {
     addQuery(query) {
       this.$refs.searchBox.setQuery(query);
     },
-    ...mapActions(['saveSearchHistory'])
+    // 删除搜索历史
+    deletSearch(query) {
+      this.deletSearchHistory(query);
+    },
+    ...mapActions(['saveSearchHistory', 'deletSearchHistory'])
   },
   created() {
     this._getHotKey();

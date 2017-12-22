@@ -1,9 +1,9 @@
 <template>
   <div class="search-list" v-show="searches.length">
     <ul>
-      <li class="search-item" v-for="(item,index) of searches" :key="index">
+      <li class="search-item" v-for="(item,index) of searches" :key="index" @click="selectSearch(item)">
         <span class="text">{{item}}</span>
-        <span class="icon">
+        <span class="icon" @click.stop="deletSearch(item)">
           <i class="icon-delete"></i>
         </span>
       </li>
@@ -17,6 +17,16 @@ export default {
     searches: {
       type: Array,
       default: []
+    }
+  },
+  methods: {
+    // 选择搜索历史
+    selectSearch(item) {
+      this.$emit('selectSearch', item);
+    },
+    // 删除搜索历史
+    deletSearch(item) {
+      this.$emit('deletSearch', item);
     }
   }
 };

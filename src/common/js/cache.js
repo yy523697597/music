@@ -1,10 +1,3 @@
-/**
- *
- *
- * @author yu yi
- * @export
- * @param {any} query 要缓存的字段
- */
 import storage from 'good-storage';
 
 // 使用双下划线，避免命名重复
@@ -12,6 +5,14 @@ const SEARCH_KEY = '__search__';
 // 搜索数组最大存储条数
 const SEARCH_MAX_LENGTH = 15;
 
+/**
+ *
+ *
+ * @author yu yi
+ * @export
+ * @param {any} query 要缓存的字段
+ */
+// 保存搜索历史
 export function saveSearch(query) {
   // 获取搜索数组，如果没有的话，就返回默认的空数组
   let searches = storage.get(SEARCH_KEY, []);
@@ -24,6 +25,18 @@ export function saveSearch(query) {
     },
     SEARCH_MAX_LENGTH
   );
+  // 缓存搜索数组
+  storage.set(SEARCH_KEY, searches);
+  // 返回搜索数组
+  return searches;
+}
+
+// 删除搜索历史
+export function deleteSearchHistory(query) {
+  let searches = storage.get(SEARCH_KEY, []);
+  deleteFromArray(searches, item => {
+    return item === query;
+  });
   // 缓存搜索数组
   storage.set(SEARCH_KEY, searches);
   // 返回搜索数组
@@ -57,4 +70,11 @@ function insertArray(arr, val, compare, maxLen) {
 // 从缓存中获取搜索历史
 export function loadSearch() {
   return storage.get(SEARCH_KEY, []);
+}
+
+function deleteFromArray(arr, compare) {
+  const index = arr.findIndex(compare);
+  if (index > -1) {
+    arr.splice(index, 1);
+  }
 }

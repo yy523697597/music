@@ -2,14 +2,14 @@
  * @Author: yu yi
  * @Date: 2017-11-23 11:04:07
  * @Last Modified by: yu yi
- * @Last Modified time: 2017-12-14 09:50:50
+ * @Last Modified time: 2017-12-22 09:53:34
  */
 
 // 选择歌曲
 import * as types from './mutation-types';
 import { playMode } from 'common/js/config';
 import { shuffle } from 'common/js/util';
-import { saveSearch } from 'common/js/cache';
+import { saveSearch, deleteSearchHistory } from 'common/js/cache';
 
 // 点击歌曲进行播放
 export const selectPlay = function({ commit, state }, { list, index }) {
@@ -101,4 +101,9 @@ export const insertSong = function({ commit, state }, song) {
 // 保存搜索历史
 export const saveSearchHistory = function({ commit }, query) {
   commit(types.SET_SEARCH_HISTORY, saveSearch(query));
+};
+
+// 删除搜索历史
+export const deletSearchHistory = function({ commit }, query) {
+  commit(types.SET_SEARCH_HISTORY, deleteSearchHistory(query));
 };
