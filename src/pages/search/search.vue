@@ -6,26 +6,28 @@
       </div>
     </div>
     <div class="shortcut-wrapper" ref="shortcutWrapper" v-show="!query">
-      <scroll class="shortcut" :data="shortcut">
+      <scroll class="shortcut" :data="shortcut" ref="shortcut">
         <div>
-          <div class="hot-key">
-            <h1 class="title">热门搜索</h1>
-            <ul>
-              <li v-for="(item,index) of hotKey" :key="index" class="item" @click="addQuery(item.k)">
-                <span>{{item.k}}</span>
-              </li>
-            </ul>
+          <div>
+            <div class="hot-key">
+              <h1 class="title">热门搜索</h1>
+              <ul>
+                <li v-for="(item,index) of hotKey" :key="index" class="item" @click="addQuery(item.k)">
+                  <span>{{item.k}}</span>
+                </li>
+              </ul>
+            </div>
           </div>
-        </div>
 
-        <div class="search-history" v-show="searchHistory.length ">
-          <h1 class="title">
-            <span class="text">搜索历史</span>
-            <span class="clear" @click="showConfirm">
-              <i class="icon-clear"></i>
-            </span>
-          </h1>
-          <search-list :searches="searchHistory" @selectSearch="addQuery" @deletSearch="deletSearch"></search-list>
+          <div class="search-history" v-show="searchHistory.length ">
+            <h1 class="title">
+              <span class="text">搜索历史</span>
+              <span class="clear" @click="showConfirm">
+                <i class="icon-clear"></i>
+              </span>
+            </h1>
+            <search-list :searches="searchHistory" @selectSearch="addQuery" @deletSearch="deletSearch"></search-list>
+          </div>
         </div>
       </scroll>
     </div>
@@ -45,8 +47,10 @@ import Scroll from 'base/scroll/scroll';
 import Confirm from 'base/confirm/confirm';
 import { mapActions, mapGetters } from 'vuex';
 import { getHotKey } from 'common/js/getHotKey';
+import { playlistMixin } from 'common/js/mixin';
 
 export default {
+  mixins: [playlistMixin],
   components: {
     SearchBox,
     Suggest,
@@ -67,13 +71,19 @@ export default {
     }
   },
   methods: {
+    handlePlaylist(playlist) {
+      const bottom = playlist.length > 0 ? '1.2rem' : '';
+      this.$refs.shortcutWrapper.style.bottom = bottom;
+      this.$refs.shortcut.refresh();
+      this.$refs.searchResult.style.bottom = bottom;
+      this.$refs.suggest.refresh();
+    },
     onQueryChange(newquery) {
       this.query = newquery;
     },
     // 获取热门搜索词
     _getHotKey() {
       getHotKey().then(res => {
-        console.log(res);
         if (res.code === 0) {
           this.hotKey = res.data.hotkey.slice(0, 10);
         }
@@ -109,6 +119,15 @@ export default {
   },
   created() {
     this._getHotKey();
+  },
+  watch: {
+    query(newQuery) {
+      if (!newQuery) {
+        setTimeout(() => {
+          this.$refs.shortcut.refresh();
+        }, 20);
+      }
+    }
   }
 };
 </script>

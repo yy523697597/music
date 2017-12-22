@@ -1,8 +1,8 @@
 /*
  * @Author: yu yi
  * @Date: 2017-12-14 09:29:56
- * @Last Modified by:   yu yi
- * @Last Modified time: 2017-12-14 09:29:56
+ * @Last Modified by: yu yi
+ * @Last Modified time: 2017-12-22 11:14:00
  */
 <template>
   <scroll class="suggest" :data="resultSongs" @pullingUp="searchMore" ref="suggest" :beforeScroll="beforeScroll" @beforeScroll="listScroll">
@@ -134,6 +134,9 @@ export default {
         }
       });
       this.$emit('select');
+    },
+    refresh() {
+      this.$refs.suggest.refresh();
     },
     ...mapMutations({
       setSinger: 'SET_SINGER'
