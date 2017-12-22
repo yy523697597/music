@@ -78,3 +78,9 @@ function deleteFromArray(arr, compare) {
     arr.splice(index, 1);
   }
 }
+
+// 清空搜索历史
+export function clearSearch() {
+  storage.remove(SEARCH_KEY);
+  return [];
+}
