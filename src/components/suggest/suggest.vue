@@ -78,8 +78,9 @@ export default {
     },
     // 搜索关键字返回歌曲
     _searchSongs() {
-      const searchSongsUrl = `${this.HOST}/search?keywords=${this
-        .query}&limit=${this.limit}&offset=${this.offset}`;
+      const searchSongsUrl = `${this.HOST}/search?keywords=${
+        this.query
+      }&limit=${this.limit}&offset=${this.offset}`;
 
       this.$http.get(searchSongsUrl).then(res => {
         if (res.data.code === ERR_OK && res.data.result.songCount) {
@@ -95,8 +96,9 @@ export default {
     },
     _searchSinger() {
       // 搜索歌手
-      const searchSingersUrl = `${this.HOST}/search?keywords=${this
-        .query}&limit=${this.limit}&offset=${this.offset}&type=100`;
+      const searchSingersUrl = `${this.HOST}/search?keywords=${
+        this.query
+      }&limit=${this.limit}&offset=${this.offset}&type=100`;
 
       this.$http.get(searchSingersUrl).then(res => {
         if (res.data.code === ERR_OK && res.data.result.artists) {
@@ -129,7 +131,16 @@ export default {
       const songUrl = `${this.HOST}/song/detail?ids=${song.id}`;
       this.$http.get(songUrl).then(res => {
         if (res.data.code === ERR_OK) {
-          const resultSong = res.data.songs[0];
+          // 返回数据结构与player要求的不一致，所以做了处理
+          let item = res.data.songs[0];
+          const temp = {
+            album: item.al,
+            artists: item.ar,
+            duration: item.dt
+          };
+          // 融合一个有缺失属性的对象
+          const resultSong = Object.assign(temp, item);
+
           this.insertSong(resultSong);
         }
       });
