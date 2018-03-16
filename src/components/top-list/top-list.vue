@@ -28,11 +28,13 @@ export default {
   methods: {
     // 获取榜单详情
     _getRankDetail() {
-      const rankDetailUrl = `${this.HOST}//playlist/detail?id=${this.topList
-        .id}`;
+      const rankDetailUrl = `${this.HOST}//playlist/detail?id=${
+        this.topList.id
+      }`;
       this.$http.get(rankDetailUrl).then(res => {
+        console.log(res.data);
         if (res.data.code === ERR_OK) {
-          this.playlist = res.data.playlist.tracks;
+          this.playlist = res.data.result.tracks;
         }
       });
     }

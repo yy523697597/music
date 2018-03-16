@@ -39,7 +39,7 @@ export default {
   methods: {
     // 返回歌曲描述
     getDesc(song) {
-      return `${song.ar[0].name} - ${song.al.name}`;
+      return `${song.artists[0].name} - ${song.album.name}`;
     },
     // 派发点击事件
     selectItem(item, index) {

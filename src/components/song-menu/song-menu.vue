@@ -38,7 +38,8 @@ export default {
 
       this.$http.get(songMenuUrl).then(res => {
         if (res.data.code === ERR_OK) {
-          this.songs = res.data.playlist.tracks;
+          console.log(res.data);
+          this.songs = res.data.result.tracks;
         }
       });
     }

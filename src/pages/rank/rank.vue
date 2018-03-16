@@ -11,7 +11,7 @@
           <ul class="songlist">
             <li class="song" v-for="(song,index) of officialRankItem.songs" :key="index">
               <span>{{index+1}}</span>
-              <span>{{song.name}} - {{song.ar[0].name}}</span>
+              <span>{{song.name}} - {{song.artists[0].name}}</span>
             </li>
           </ul>
         </li>
@@ -58,26 +58,31 @@ export default {
       this.$http.get(rankUrl).then(res => {
         if (res.data.code === ERR_OK) {
           // 获取排行版封面图片
-          let avatar = res.data.result.coverImgUrl;
+          let avatar = res.data.playlist.coverImgUrl;
           // 获取排行榜歌单的id
-          let id = res.data.result.id;
-          let title = res.data.result.name;
+          let id = res.data.playlist.id;
+          let title = res.data.playlist.name;
           // 根据返回的排行榜id，使用获取歌单详情的接口去获取排行榜歌曲
-          let rankDetailUrl = `${this.HOST}//playlist/detail?id=${res.data
-            .result.id}`;
+          let rankDetailUrl = `${this.HOST}//playlist/detail?id=${
+            res.data.playlist.id
+          }`;
 
           this.$http.get(rankDetailUrl).then(res => {
+            // console.log(res.data);
             if (res.data.code === ERR_OK) {
               // 定义一个临时对象，用于存储排行榜的封面和3首歌曲,歌单id
               let temp = {
                 title,
                 id,
                 avatar,
-                songs: res.data.playlist.tracks.splice(0, 3)
+                songs: res.data.result.tracks.splice(0, 3)
               };
+
               // 将临时对象添加到官方榜单的数组中
               this.officialInfo.push(temp);
+              // console.log(this.officialInfo);
               if (this.idxOfficial.length) {
+                // 此处使用递归来保证每次请求的顺序都是一致的，但是会导致显示速度非常慢
                 this._getRankInfo();
               }
             }

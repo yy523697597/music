@@ -1,5 +1,5 @@
 <template>
-<transition name="slide">
+  <transition name="slide">
     <music-list :songs="songs" :title="title" :bg-image="bgImage"></music-list>
   </transition>
 </template>
@@ -32,7 +32,18 @@ export default {
       const singerUrl = `${this.HOST}/artists?id=${singerId}`;
       this.$http.get(singerUrl).then(res => {
         if (res.status === ERR_OK) {
-          this.songs = res.data.hotSongs;
+          console.log('成功请求歌手歌曲列表');
+          // 此处返回的歌曲列表的数据结构有所不同，需要进行一次处理
+          res.data.hotSongs.forEach(item => {
+            const temp = {
+              album: item.al,
+              artists: item.ar,
+              duration: item.dt
+            };
+            // 融合一个有缺失属性的对象
+            item = Object.assign(temp, item);
+            this.songs.push(item);
+          });
         }
       });
     }

@@ -10,7 +10,7 @@
       <div class="normal-player" v-show="fullScreen">
         <!-- 播放器高斯模糊背景 -->
         <div class="background">
-          <img width="100%" height="100%" :src="currentSong.al.picUrl">
+          <img width="100%" height="100%" :src="currentSong.album.picUrl">
         </div>
         <div class="top">
           <!-- 返回按钮 -->
@@ -19,13 +19,13 @@
           </div>
           <!-- 歌曲名称及歌手 -->
           <h1 class="title">{{currentSong.name}}</h1>
-          <h2 class="subtitle">{{currentSong.ar[0].name}}</h2>
+          <h2 class="subtitle">{{currentSong.artists[0].name}}</h2>
         </div>
         <div class="middle" @touchstart.prevent="middleTouchStart" @touchmove.prevent="middleTouchMove" @touchend="middleTouchEnd">
           <!-- 唱片 -->
           <div class="middle-l" ref="cdWrapper">
             <div class="cd-wrapper">
-              <div class="cd" :class="cdCls"><img :src="currentSong.al.picUrl" alt="" class="image"></div>
+              <div class="cd" :class="cdCls"><img :src="currentSong.album.picUrl" alt="" class="image"></div>
             </div>
             <!-- 当前歌词 -->
             <div class="playing-lyric-wrapper">
@@ -53,7 +53,7 @@
             <div class="progress-bar-wrapper ">
               <progress-bar :percent="percent " @percentChange="onProgressBarChange "></progress-bar>
             </div>
-            <span class="time time-r ">{{formatTime(currentSong.dt/1000)}}</span>
+            <span class="time time-r ">{{formatTime(currentSong.duration/1000)}}</span>
           </div>
           <!-- 歌曲播放操作区 -->
           <div class="operators ">
@@ -84,10 +84,10 @@
     <!-- mini播放器 -->
     <transition name="mini ">
       <div class="mini-player " v-show="!fullScreen " @click="open ">
-        <div class="icon "><img width="40 " height="40 " :src="currentSong.al.picUrl " :class="cdCls "></div>
+        <div class="icon "><img width="40 " height="40 " :src="currentSong.album.picUrl " :class="cdCls "></div>
         <div class="text ">
           <h2 class="name ">{{currentSong.name}}</h2>
-          <p class="desc ">{{currentSong.ar[0].name}}</p>
+          <p class="desc ">{{currentSong.artists[0].name}}</p>
         </div>
         <!-- 使用stop阻止冒泡，避免打开播放器层 -->
         <div class="control " @click.stop="togglePlaying ">
@@ -172,7 +172,7 @@ export default {
     },
     // 进度条百分比
     percent() {
-      return this.currentTime / (this.currentSong.dt / 1000);
+      return this.currentTime / (this.currentSong.duration / 1000);
     }
   },
   methods: {
@@ -273,8 +273,9 @@ export default {
       return `${minute}:${second}`;
     },
     onProgressBarChange(percent) {
-      const currentTime = percent * (this.currentSong.dt / 1000);
+      const currentTime = percent * (this.currentSong.duration / 1000);
       // currentTiem 是一个可读可写的参数，写参数可以改播放进度
+      console.log(currentTime);
       this.$refs.music.currentTime = currentTime;
       if (!this.playing) {
         this.togglePlaying();
@@ -384,6 +385,7 @@ export default {
       let url = this.HOST + `/music/url?id=${id}`;
       this.$http.get(url).then(res => {
         if (res.data.code === 200) {
+          console.log(res.data);
           this.playUrl = res.data.data[0].url;
         }
       });
@@ -411,7 +413,7 @@ export default {
             this.currentLyric.play();
           }
         })
-        // 获取不到歌词的时进行的处理
+        // 获取不到歌词时进行的处理
         .catch(() => {
           this.currentLyric = null;
           this.playingLyric = null;
@@ -500,7 +502,7 @@ export default {
     this.touch = {};
   },
   watch: {
-    currentSong() {
+    currentSong(val) {
       this._getMusicPlayUrl(this.currentSong.id);
 
       // 切换歌曲时，重新定位歌词到顶部
