@@ -2,7 +2,7 @@
  * @Author: yu yi 
  * @Date: 2017-11-23 10:03:38 
  * @Last Modified by: yu yi
- * @Last Modified time: 2017-12-05 10:40:46
+ * @Last Modified time: 2018-03-19 14:16:54
  */
 <template>
   <div class="player" v-if="playlist.length >0">
@@ -97,11 +97,13 @@
           </progress-circle>
         </div>
         <!-- 歌曲列表按钮 -->
-        <div class="control ">
+        <!-- 阻止点击冒泡 -->
+        <div class="control " @click.stop="showPlaylist">
           <i class="icon-playlist "></i>
         </div>
       </div>
     </transition>
+    <playlist ref="playlist"> </playlist>
     <audio :src="playUrl" ref="music" @canplay="ready" @error="onError" @timeupdate="updateTime" @ended="musicEnd"></audio>
 
   </div>
@@ -116,7 +118,7 @@ import { playMode } from 'common/js/config.js';
 import { shuffle } from 'common/js/util.js';
 import Lyric from 'lyric-parser';
 import Scroll from 'base/scroll/scroll';
-
+import Playlist from 'components/playlist/playlist';
 export default {
   data() {
     return {
@@ -176,6 +178,10 @@ export default {
     }
   },
   methods: {
+    // 显示播放列表
+    showPlaylist() {
+      this.$refs.playlist.show();
+    },
     // 收起播放器全屏
     back() {
       this.setFullScreen(false);
@@ -495,7 +501,8 @@ export default {
   components: {
     ProgressBar,
     ProgressCircle,
-    Scroll
+    Scroll,
+    Playlist
   },
   created() {
     // 关联一个触摸对象，用于切换唱片与歌词

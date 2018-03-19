@@ -2,7 +2,7 @@
  * @Author: yu yi
  * @Date: 2017-11-23 11:04:07
  * @Last Modified by: yu yi
- * @Last Modified time: 2017-12-22 10:00:41
+ * @Last Modified time: 2018-03-19 15:57:25
  */
 
 // 选择歌曲
@@ -87,7 +87,7 @@ export const insertSong = function({ commit, state }, song) {
       sequenceList.splice(fsIndex + 1, 1);
     }
   }
-  console.log(playlist);
+
   // console.log(sequenceList);
   commit(types.SET_PLAYLIST, playlist);
   commit(types.SET_SEQUENCE_LIST, sequenceList);
@@ -111,4 +111,30 @@ export const deletSearchHistory = function({ commit }, query) {
 // 清空搜索历史
 export const clearSearchHistory = function({ commit }) {
   commit(types.SET_SEARCH_HISTORY, clearSearch());
+};
+
+// 从播放列表中删除歌曲
+export const deleteSong = function({ commit, state }, song) {
+  // 此处必须使用slice方法来创建一个palylist的副本，不然直接修改playlist会报错
+  let playlist = state.playlist.slice();
+  let sequenceList = state.sequenceList.slice();
+  let currentIndex = state.currentIndex;
+
+  let pIndex = findIndex(playlist, song);
+  playlist.splice(pIndex, 1);
+  let sIndex = findIndex(sequenceList, song);
+  sequenceList.splice(sIndex, 1);
+
+  // 如果删除的歌曲在当前播放的歌曲后面或者删除的歌曲是最后一首，就要把index减一
+  if (currentIndex > pIndex || currentIndex === playlist.length) {
+    currentIndex--;
+  }
+  commit(types.SET_PLAYLIST, playlist);
+  commit(types.SET_SEQUENCE_LIST, sequenceList);
+  commit(types.SET_CURRENT_INDEX, currentIndex);
+
+  // 如果当前播放列表已经被删空了之后，需要更改播放器的播放状态
+  if (!playlist.length) {
+    commit(types.SET_PLAYING_STATE, false);
+  }
 };
