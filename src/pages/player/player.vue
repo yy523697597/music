@@ -2,7 +2,7 @@
  * @Author: yu yi 
  * @Date: 2017-11-23 10:03:38 
  * @Last Modified by: yu yi
- * @Last Modified time: 2018-03-22 14:56:51
+ * @Last Modified time: 2018-03-26 15:34:00
  */
 <template>
   <div class="player" v-if="playlist.length >0">
@@ -510,15 +510,21 @@ export default {
   },
   watch: {
     currentSong(newSong, oldSong) {
-      // 在播放列表中删除最后一首歌的时候，就不请求播放地址之类的了
+      console.log(newSong.id);
       if (!newSong) {
         return;
       }
-      // 同样的歌不请求播放地址
-      if (newSong.id === oldSong.id) {
+      // 在播放列表中删除最后一首歌的时候，就不请求播放地址之类的了
+      if (!newSong.id) {
         return;
       }
-      this._getMusicPlayUrl(this.currentSong.id);
+      // 同样的歌不请求播放地址，在此之前需要判断是否存在oldSong，如果是第一次播放歌曲就不存在oldSong
+      if (oldSong && newSong.id === oldSong.id) {
+        return;
+      }
+
+      this._getMusicPlayUrl(newSong.id);
+      console.log(234);
 
       // 切换歌曲时，重新定位歌词到顶部
       if (this.currentLyric && this.currentLyric.stop) {
