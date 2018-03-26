@@ -1,43 +1,43 @@
 <template>
-  <!-- <tansition name="list-fade"> -->
-  <div class="playlist" v-show="showFlag" @click="hide">
-    <!-- click.stop 仅用于阻止冒泡 -->
-    <div class="list-wrapper" @click.stop>
-      <div class="list-header">
-        <h1 class="title">
-          <i class="icon"></i>
-          <span class="text"></span>
-          <span class="clear">
-            <i class="icon-clear"></i>
-          </span>
-        </h1>
-      </div>
-      <scroll ref="listContent" :data="sequenceList" class="list-content">
-        <ul>
-          <li ref="listItem" class="item" v-for="(song,index) of sequenceList" :key="index" @click="selectItem(song,index)">
-            <i class="current" :class="getCurrentIcon(song)"></i>
-            <span class="text">{{song.name}}</span>
-            <span class="like">
-              <i class="icon-not-favorite"></i>
+  <transition name="list-fade">
+    <div class="playlist" v-show="showFlag" @click="hide">
+      <!-- click.stop 仅用于阻止冒泡 -->
+      <div class="list-wrapper" @click.stop>
+        <div class="list-header">
+          <h1 class="title">
+            <i class="icon"></i>
+            <span class="text"></span>
+            <span class="clear">
+              <i class="icon-clear"></i>
             </span>
-            <span class="delete" @click.stop="deleteItem(song)">
-              <i class="icon-delete"></i>
-            </span>
-          </li>
-        </ul>
-      </scroll>
-      <div class="list-operate">
-        <div class="add">
-          <i class="icon-add"></i>
-          <span class="text">添加歌曲到队列</span>
+          </h1>
+        </div>
+        <scroll ref="listContent" :data="sequenceList" class="list-content">
+          <ul>
+            <li ref="listItem" class="item" v-for="(song,index) of sequenceList" :key="index" @click="selectItem(song,index)">
+              <i class="current" :class="getCurrentIcon(song)"></i>
+              <span class="text">{{song.name}}</span>
+              <span class="like">
+                <i class="icon-not-favorite"></i>
+              </span>
+              <span class="delete" @click.stop="deleteItem(song)">
+                <i class="icon-delete"></i>
+              </span>
+            </li>
+          </ul>
+        </scroll>
+        <div class="list-operate">
+          <div class="add">
+            <i class="icon-add"></i>
+            <span class="text">添加歌曲到队列</span>
+          </div>
+        </div>
+        <div class="list-close" @click="hide">
+          <span>关闭</span>
         </div>
       </div>
-      <div class="list-close" @click="hide">
-        <span>关闭</span>
-      </div>
     </div>
-  </div>
-  <!-- </tansition> -->
+  </transition>
 </template>
 
 <script type="text/ecmascript-6">
