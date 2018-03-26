@@ -2,7 +2,7 @@
  * @Author: yu yi 
  * @Date: 2017-11-23 10:03:38 
  * @Last Modified by: yu yi
- * @Last Modified time: 2018-03-19 14:16:54
+ * @Last Modified time: 2018-03-22 14:56:51
  */
 <template>
   <div class="player" v-if="playlist.length >0">
@@ -509,7 +509,15 @@ export default {
     this.touch = {};
   },
   watch: {
-    currentSong(val) {
+    currentSong(newSong, oldSong) {
+      // 在播放列表中删除最后一首歌的时候，就不请求播放地址之类的了
+      if (!newSong) {
+        return;
+      }
+      // 同样的歌不请求播放地址
+      if (newSong.id === oldSong.id) {
+        return;
+      }
       this._getMusicPlayUrl(this.currentSong.id);
 
       // 切换歌曲时，重新定位歌词到顶部

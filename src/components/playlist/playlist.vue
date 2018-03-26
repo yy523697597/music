@@ -1,47 +1,47 @@
 <template>
-  <tansition name="list-fade">
-    <div class="playlist" v-show="showFlag" @click="hide">
-      <!-- click.stop 仅用于阻止冒泡 -->
-      <div class="list-wrapper" @click.stop>
-        <div class="list-header">
-          <h1 class="title">
-            <i class="icon"></i>
-            <span class="text"></span>
-            <span class="clear">
-              <i class="icon-clear"></i>
+  <!-- <tansition name="list-fade"> -->
+  <div class="playlist" v-show="showFlag" @click="hide">
+    <!-- click.stop 仅用于阻止冒泡 -->
+    <div class="list-wrapper" @click.stop>
+      <div class="list-header">
+        <h1 class="title">
+          <i class="icon"></i>
+          <span class="text"></span>
+          <span class="clear">
+            <i class="icon-clear"></i>
+          </span>
+        </h1>
+      </div>
+      <scroll ref="listContent" :data="sequenceList" class="list-content">
+        <ul>
+          <li ref="listItem" class="item" v-for="(song,index) of sequenceList" :key="index" @click="selectItem(song,index)">
+            <i class="current" :class="getCurrentIcon(song)"></i>
+            <span class="text">{{song.name}}</span>
+            <span class="like">
+              <i class="icon-not-favorite"></i>
             </span>
-          </h1>
-        </div>
-        <scroll ref="listContent" :data="sequenceList" class="list-content">
-          <ul>
-            <li ref="listItem" class="item" v-for="(song,index) of sequenceList" :key="index" @click="selectItem(song,index)">
-              <i class="current" :class="getCurrentIcon(song)"></i>
-              <span class="text">{{song.name}}</span>
-              <span class="like">
-                <i class="icon-not-favorite"></i>
-              </span>
-              <span class="delete" @click="deleteItem(song)">
-                <i class="icon-delete"></i>
-              </span>
-            </li>
-          </ul>
-        </scroll>
-        <div class="list-operate">
-          <div class="add">
-            <i class="icon-add"></i>
-            <span class="text">添加歌曲到队列</span>
-          </div>
-        </div>
-        <div class="list-close" @click="hide">
-          <span>关闭</span>
+            <span class="delete" @click.stop="deleteItem(song)">
+              <i class="icon-delete"></i>
+            </span>
+          </li>
+        </ul>
+      </scroll>
+      <div class="list-operate">
+        <div class="add">
+          <i class="icon-add"></i>
+          <span class="text">添加歌曲到队列</span>
         </div>
       </div>
+      <div class="list-close" @click="hide">
+        <span>关闭</span>
+      </div>
     </div>
-  </tansition>
+  </div>
+  <!-- </tansition> -->
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters, mapMutations } from 'vuex';
+import { mapGetters, mapMutations, mapActions } from 'vuex';
 import Scroll from 'base/scroll/scroll';
 import { playMode } from 'common/js/config';
 export default {
@@ -74,7 +74,8 @@ export default {
     // 播放列表的点击事件
     selectItem(song, index) {
       // 如果是随机播放需要在播放列表中找到播放索引，而不能直接使用index
-      if (this.mode === playMode.random) {
+      if (this.playMode === playMode.random) {
+        console.log(234);
         index = this.playlist.findIndex(item => {
           return item.id === song.id;
         });
@@ -83,7 +84,13 @@ export default {
       // 修改播放状态
       this.setPlayingState(true);
     },
-    delete(song) {},
+    // 删除播放列表中的歌曲
+    deleteItem(song) {
+      this.deleteSong(song);
+      if (!this.playlist.length) {
+        this.hide();
+      }
+    },
     // 切换当前播放歌曲为播放列表第一位,带滚动动画
     scrollToCurrent(current) {
       const index = this.sequenceList.findIndex(song => {
@@ -94,17 +101,19 @@ export default {
     // 不生效？
     watch: {
       currentSong(newSong, oldSong) {
-        console.log(234234);
         if (!this.showFlag || newSong.id === oldSong.id) {
           return;
         }
-        this.scrollToCurrent(newSong);
+        setTimeout(() => {
+          this.scrollToCurrent(newSong);
+        }, 20);
       }
     },
     ...mapMutations({
       setCurrentIndex: 'SET_CURRENT_INDEX',
       setPlayingState: 'SET_PLAYING_STATE'
-    })
+    }),
+    ...mapActions(['deleteSong'])
   },
   components: {
     Scroll

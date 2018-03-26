@@ -2,7 +2,7 @@
  * @Author: yu yi
  * @Date: 2017-11-23 11:04:07
  * @Last Modified by: yu yi
- * @Last Modified time: 2018-03-19 15:57:25
+ * @Last Modified time: 2018-03-19 16:18:06
  */
 
 // 选择歌曲
@@ -136,5 +136,7 @@ export const deleteSong = function({ commit, state }, song) {
   // 如果当前播放列表已经被删空了之后，需要更改播放器的播放状态
   if (!playlist.length) {
     commit(types.SET_PLAYING_STATE, false);
+  } else {
+    commit(types.SET_PLAYING_STATE, true);
   }
 };
