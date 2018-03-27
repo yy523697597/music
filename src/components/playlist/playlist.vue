@@ -1,3 +1,9 @@
+/*
+ * @Author: yu yi
+ * @Date: 2018-03-26 15:39:27
+ * @Last Modified by: yu yi
+ * @Last Modified time: 2018-03-26 15:58:22
+ */
 <template>
   <transition name="list-fade">
     <div class="playlist" v-show="showFlag" @click="hide">
@@ -13,7 +19,7 @@
           </h1>
         </div>
         <scroll ref="listContent" :data="sequenceList" class="list-content">
-          <ul>
+          <transition-group name="list-complete" tag="ul">
             <li ref="listItem" class="item" v-for="(song,index) of sequenceList" :key="index" @click="selectItem(song,index)">
               <i class="current" :class="getCurrentIcon(song)"></i>
               <span class="text">{{song.name}}</span>
@@ -24,7 +30,7 @@
                 <i class="icon-delete"></i>
               </span>
             </li>
-          </ul>
+          </transition-group>
         </scroll>
         <div class="list-operate">
           <div class="add">
@@ -142,6 +148,15 @@ export default {
     transform: translate3d(0, 100%, 0);
   }
 }
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.1s;
+}
+.list-enter,
+.list-leave-to {
+  height: 0;
+}
+
 .playlist {
   position: fixed;
   left: 0;
@@ -182,7 +197,7 @@ export default {
       }
     }
     .list-content {
-      max-height: 240px;
+      max-height: 4.8rem;
       overflow: hidden;
       .item {
         display: flex;
@@ -190,14 +205,8 @@ export default {
         height: 40px;
         padding: 0 30px 0 20px;
         overflow: hidden;
-        &.list-enter-active,
-        &.list-leave-active {
-          transition: all 0.1s;
-        }
-        &.list-enter,
-        &.list-leave-to {
-          height: 0;
-        }
+        transition: all 1s;
+
         .current {
           flex: 0 0 20px;
           width: 20px;

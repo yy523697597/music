@@ -7,7 +7,7 @@ import fastclick from 'fastclick';
 import axios from 'axios';
 import VueLazyLoad from 'vue-lazyload';
 import store from './store';
-
+require('./assets/util/vconsole.js');
 import './common/scss/index.css';
 
 fastclick.attach(document.body);
