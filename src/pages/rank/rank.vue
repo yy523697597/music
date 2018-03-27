@@ -51,11 +51,14 @@ export default {
       this.setTopList(item);
     },
     // 获取排行榜信息
-    _getRankInfo() {
-      // 官方榜的地址
-      let rankUrl = `${this.HOST}/top/list?idx=${this.idxOfficial.shift()}`;
-      // 获取官方榜的信息
-      this.$http.get(rankUrl).then(res => {
+    async _getRankInfo() {
+      // 使用map方法返回promise对象
+      let tempArr = this.idxOfficial.map(async item => {
+        // 官方榜的地址
+        let rankUrl = `${this.HOST}/top/list?idx=${item}`;
+        // 获取官方榜的信息
+        let res = await this.$http.get(rankUrl);
+
         if (res.data.code === ERR_OK) {
           // 获取排行版封面图片
           let avatar = res.data.playlist.coverImgUrl;
@@ -67,28 +70,21 @@ export default {
             res.data.playlist.id
           }`;
 
-          this.$http.get(rankDetailUrl).then(res => {
-            // console.log(res.data);
-            if (res.data.code === ERR_OK) {
-              // 定义一个临时对象，用于存储排行榜的封面和3首歌曲,歌单id
-              let temp = {
-                title,
-                id,
-                avatar,
-                songs: res.data.result.tracks.splice(0, 3)
-              };
-
-              // 将临时对象添加到官方榜单的数组中
-              this.officialInfo.push(temp);
-              // console.log(this.officialInfo);
-              if (this.idxOfficial.length) {
-                // 此处使用递归来保证每次请求的顺序都是一致的，但是会导致显示速度非常慢
-                this._getRankInfo();
-              }
-            }
-          });
+          let detail = await this.$http.get(rankDetailUrl);
+          if (detail.data.code === ERR_OK) {
+            // 定义一个临时对象，用于存储排行榜的封面和3首歌曲,歌单id
+            let temp = {
+              title,
+              id,
+              avatar,
+              songs: detail.data.result.tracks.splice(0, 3)
+            };
+            return temp;
+          }
         }
       });
+      // 使用Promise.all来保证并发的异步的顺序，对比使用递归的方法，速度有极大的提升
+      this.officialInfo = await Promise.all(tempArr);
     },
     _getRankContent(index) {},
     // 优化有mini播放器的页面状态
