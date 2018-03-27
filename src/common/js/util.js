@@ -2,7 +2,7 @@
  * @Author: yu yi
  * @Date: 2017-11-29 13:51:39
  * @Last Modified by: yu yi
- * @Last Modified time: 2017-12-11 10:38:44
+ * @Last Modified time: 2018-03-27 10:28:03
  */
 
 // 打乱数组排序,不会修改原来的数组
@@ -31,4 +31,16 @@ export function debounce(func, delay) {
       func.apply(this, args);
     }, delay);
   };
+}
+
+// 从地址栏获取参数
+export function getQueryString(name, url) {
+  let reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+  let r = window.location.search.substr(1).match(reg);
+  if (url) {
+    let s = url.split('?');
+    r = s[1] ? s[1].match(reg) : s[0].match(reg);
+  }
+  if (r != null) return unescape(r[2]);
+  return null;
 }
