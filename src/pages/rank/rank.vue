@@ -119,7 +119,7 @@ export default {
   //   margin-top: -0.2rem;
   // }
   .rank-title {
-    color: #fff;
+    color: #222;
     font-size: $font-size-medium;
     border-left: 2px solid $color-theme;
     padding-left: 0.1rem;
@@ -154,7 +154,7 @@ export default {
         height: 2rem;
         overflow: hidden;
         background: $color-highlight-background;
-        color: $color-text-d;
+        color: $color-text-l;
         font-size: $font-size-small;
         .song {
           @include no-wrap();

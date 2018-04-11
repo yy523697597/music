@@ -22,8 +22,8 @@
                 <img v-lazy="item.coverImgUrl">
               </div>
               <div class="text">
-                <h2 class="name">{{item.creator.nickname}}</h2>
-                <p class="desc">{{item.name}}</p>
+                <h2 class="name">{{item.name}}</h2>
+                <p class="desc">{{item.creator.nickname}}</p>
               </div>
             </li>
           </ul>
