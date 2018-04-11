@@ -85,7 +85,7 @@ export default {
     // 获取banner数据
     _getBanners() {
       // 获取banner数据
-      const url = this.HOST + 'banner';
+      const url = this.HOST + '/banner';
       this.$http.get(url).then(res => {
         if (res.status === ERR_OK) {
           this.banners = res.data.banners;
@@ -94,7 +94,7 @@ export default {
     },
     // 获取推荐歌单
     _getPlaylists() {
-      const url = this.HOST + 'top/playlist?limit=200&order=hot';
+      const url = this.HOST + '/top/playlist?limit=200&order=hot';
       this.$http.get(url).then(res => {
         if (res.status === ERR_OK) {
           this.allPlayLists = res.data.playlists;

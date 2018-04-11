@@ -66,7 +66,7 @@ export default {
           let id = res.data.playlist.id;
           let title = res.data.playlist.name;
           // 根据返回的排行榜id，使用获取歌单详情的接口去获取排行榜歌曲
-          let rankDetailUrl = `${this.HOST}//playlist/detail?id=${
+          let rankDetailUrl = `${this.HOST}/playlist/detail?id=${
             res.data.playlist.id
           }`;
 

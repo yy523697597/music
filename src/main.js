@@ -17,7 +17,7 @@ Vue.use(VueLazyLoad, {
 });
 
 Vue.config.productionTip = false;
-Vue.prototype.HOST = '/api';
+Vue.prototype.HOST = 'http://music.yuiyu.cn:3000';
 Vue.prototype.$http = axios;
 
 /* eslint-disable no-new */
