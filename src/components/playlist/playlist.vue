@@ -2,7 +2,7 @@
  * @Author: yu yi
  * @Date: 2018-03-26 15:39:27
  * @Last Modified by: yu yi
- * @Last Modified time: 2018-03-26 15:58:22
+ * @Last Modified time: 2018-04-10 14:53:59
  */
 <template>
   <transition name="list-fade">
@@ -11,9 +11,9 @@
       <div class="list-wrapper" @click.stop>
         <div class="list-header">
           <h1 class="title">
-            <i class="icon"></i>
-            <span class="text"></span>
-            <span class="clear">
+            <i class="icon" :class="iconMode " @click="changeMode"></i>
+            <span class="text">{{modeText}}</span>
+            <span class="clear" @click="showConfirm">
               <i class="icon-clear"></i>
             </span>
           </h1>
@@ -42,21 +42,33 @@
           <span>关闭</span>
         </div>
       </div>
+      <confirm ref="confirm" @confirm="clearPlaylist" title="是否清空播放列表" confirmBtnText="确定"></confirm>
     </div>
   </transition>
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters, mapMutations, mapActions } from 'vuex';
+import { mapActions } from 'vuex';
 import Scroll from 'base/scroll/scroll';
-import { playMode } from 'common/js/config';
+import Confirm from 'base/confirm/confirm';
+import { playerMixin } from 'common/js/mixin';
+import { playMode } from 'common/js/config.js';
+
 export default {
+  mixins: [playerMixin],
   name: 'playlist',
   props: {},
   data() {
     return {
       showFlag: false
     };
+  },
+  computed: {
+    modeText() {
+      return this.playMode === playMode.sequence
+        ? '顺序播放'
+        : this.playMode === playMode.loop ? '循环播放' : '随机播放';
+    }
   },
   methods: {
     show() {
@@ -97,6 +109,13 @@ export default {
         this.hide();
       }
     },
+    showConfirm() {
+      this.$refs.confirm.show();
+    },
+    clearPlaylist() {
+      this.deleteSongList();
+      this.$refs.confirm.hide();
+    },
     // 切换当前播放歌曲为播放列表第一位,带滚动动画
     scrollToCurrent(current) {
       const index = this.sequenceList.findIndex(song => {
@@ -115,19 +134,13 @@ export default {
         }, 20);
       }
     },
-    ...mapMutations({
-      setCurrentIndex: 'SET_CURRENT_INDEX',
-      setPlayingState: 'SET_PLAYING_STATE'
-    }),
-    ...mapActions(['deleteSong'])
+    ...mapActions(['deleteSong', 'deleteSongList'])
   },
   components: {
-    Scroll
+    Scroll,
+    Confirm
   },
-  created() {},
-  computed: {
-    ...mapGetters(['sequenceList', 'currentSong', 'playlist'])
-  }
+  created() {}
 };
 </script>
 

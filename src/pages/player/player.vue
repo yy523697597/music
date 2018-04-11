@@ -2,7 +2,7 @@
  * @Author: yu yi 
  * @Date: 2017-11-23 10:03:38 
  * @Last Modified by: yu yi
- * @Last Modified time: 2018-03-26 15:34:00
+ * @Last Modified time: 2018-04-10 15:02:45
  */
 <template>
   <div class="player" v-if="playlist.length >0">
@@ -110,16 +110,17 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters, mapMutations } from 'vuex';
 import animations from 'create-keyframe-animation';
 import ProgressBar from 'base/progress-bar/progress-bar';
 import ProgressCircle from 'base/progress-circle/progress-circle';
-import { playMode } from 'common/js/config.js';
-import { shuffle } from 'common/js/util.js';
 import Lyric from 'lyric-parser';
 import Scroll from 'base/scroll/scroll';
 import Playlist from 'components/playlist/playlist';
+import { playerMixin } from 'common/js/mixin';
+import { playMode } from 'common/js/config.js';
+
 export default {
+  mixins: [playerMixin],
   data() {
     return {
       // 音乐播放地址
@@ -141,15 +142,6 @@ export default {
     };
   },
   computed: {
-    ...mapGetters([
-      'fullScreen',
-      'playlist',
-      'currentSong',
-      'playing',
-      'currentIndex',
-      'playMode',
-      'sequenceList'
-    ]),
     // 播放按钮状态
     playIcon() {
       return this.playing ? 'icon-pause' : 'icon-play';
@@ -157,12 +149,6 @@ export default {
     // mini播放器播放按钮状态
     miniIcon() {
       return this.playing ? 'icon-pause-mini' : 'icon-play-mini';
-    },
-    // 播放模式图标
-    iconMode() {
-      return this.playMode === playMode.sequence
-        ? 'icon-sequence'
-        : this.playMode === playMode.loop ? 'icon-loop' : 'icon-random';
     },
     // 添加播放器旋转动画
     cdCls() {
@@ -292,40 +278,7 @@ export default {
         this.currentLyric.seek(currentTime * 1000);
       }
     },
-    // 切换播放模式
-    changeMode() {
-      // mode 依 0 1 2 循环
-      const mode = (this.playMode + 1) % 3;
-      // 设置播放模式
-      this.setPlayMode(mode);
 
-      let list = null;
-      // 随机播放
-      if (mode === playMode.random) {
-        // 打乱播放列表
-        list = shuffle(this.sequenceList);
-      } else {
-        list = this.sequenceList;
-      }
-      this.resetCurrentIndex(list);
-      // 设置播放列表
-      this.setPlaylist(list);
-    },
-    // 切换播放模式时，不切换当前正在播放的歌曲
-    resetCurrentIndex(list) {
-      let index = list.findIndex(item => {
-        return item.id === this.currentSong.id;
-      });
-      this.setCurrentIndex(index);
-    },
-    // vuex设置
-    ...mapMutations({
-      setFullScreen: 'SET_FULL_SCREEN',
-      setPlayingState: 'SET_PLAYING_STATE',
-      setCurrentIndex: 'SET_CURRENT_INDEX',
-      setPlayMode: 'SET_PLAY_MODE',
-      setPlaylist: 'SET_PLAYLIST'
-    }),
     // 动画效果
     enter(el, done) {
       const { x, y, scale } = this._getPosAndScale();
@@ -391,7 +344,6 @@ export default {
       let url = this.HOST + `/music/url?id=${id}`;
       this.$http.get(url).then(res => {
         if (res.data.code === 200) {
-          console.log(res.data);
           this.playUrl = res.data.data[0].url;
         }
       });
@@ -510,21 +462,17 @@ export default {
   },
   watch: {
     currentSong(newSong, oldSong) {
-      console.log(newSong.id);
-      if (!newSong) {
-        return;
-      }
       // 在播放列表中删除最后一首歌的时候，就不请求播放地址之类的了
-      if (!newSong.id) {
+      if (!newSong || !newSong.id) {
         return;
       }
+
       // 同样的歌不请求播放地址，在此之前需要判断是否存在oldSong，如果是第一次播放歌曲就不存在oldSong
       if (oldSong && newSong.id === oldSong.id) {
         return;
       }
 
       this._getMusicPlayUrl(newSong.id);
-      console.log(234);
 
       // 切换歌曲时，重新定位歌词到顶部
       if (this.currentLyric && this.currentLyric.stop) {
