@@ -116,7 +116,7 @@ export default {
 .rank {
   position: fixed;
   width: 100%;
-  top: 1.26rem;
+  top: 0.88rem;
   bottom: 0;
   // .container {
   //   margin-top: -0.2rem;

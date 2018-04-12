@@ -140,6 +140,10 @@ export default {
 @import '~common/scss/mixin';
 
 .search {
+  position: fixed;
+  width: 100%;
+  top: 0.88rem;
+  bottom: 0;
   .search-box-wrapper {
     margin: 0.4rem;
   }

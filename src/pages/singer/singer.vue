@@ -83,7 +83,7 @@ export default {
 .singer {
   position: fixed;
   width: 100%;
-  top: 1.26rem;
+  top: 0.88rem;
   bottom: 0;
   .singer-content {
     height: 100%;

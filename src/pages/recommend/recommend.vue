@@ -138,7 +138,7 @@ export default {
 .recommend {
   position: fixed;
   width: 100%;
-  top: 1.26rem;
+  top: 0.88rem;
   bottom: 0;
   .recommend-content {
     height: 100%;
