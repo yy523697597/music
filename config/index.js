@@ -26,13 +26,13 @@ module.exports = {
   },
   dev: {
     env: require('./dev.env'),
-    port: process.env.PORT || 3001,
+    port: process.env.PORT,
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'http://music.yuiyu.cn:3000',
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''

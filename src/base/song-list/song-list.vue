@@ -2,7 +2,7 @@
  * @Author: yu yi 
  * @Date: 2017-11-23 10:57:10 
  * @Last Modified by: yu yi
- * @Last Modified time: 2017-12-05 14:15:49
+ * @Last Modified time: 2018-04-12 10:23:02
  */
 <template>
   <div class="song-list">
@@ -112,7 +112,7 @@ export default {
         @include no-wrap();
         margin-top: 0.08rem;
         color: $color-text-d;
-        font-size: $font-size-medium;
+        font-size: $font-size-small;
       }
     }
   }

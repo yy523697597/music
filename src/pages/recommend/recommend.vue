@@ -154,7 +154,7 @@ export default {
         height: 1rem;
         line-height: 1rem;
         text-align: center;
-        font-size: $font-size-medium;
+        font-size: $font-size-large;
         color: $color-theme;
       }
       .item {
@@ -182,6 +182,11 @@ export default {
           .name {
             margin-bottom: 0.1rem;
             color: $color-text;
+            font-size: $font-size-medium;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
           .desc {
             color: $color-text-d;

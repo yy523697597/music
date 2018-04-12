@@ -1,7 +1,7 @@
 <template>
   <div class="slider" ref="slider">
     <div class="slider-group" ref="sliderGroup">
-     <slot></slot>
+      <slot></slot>
     </div>
     <div class="dots">
       <span class="dot" v-for="(item,index) of dots" :key="index" :class="{'active':currentPageIndex===index}"></span>
@@ -198,7 +198,7 @@ export default {
       &.active {
         width: 0.4rem;
         border-radius: 0.1rem;
-        background: $color-text-ll;
+        background: $color-theme;
       }
     }
   }
