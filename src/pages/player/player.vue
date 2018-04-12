@@ -2,7 +2,7 @@
  * @Author: yu yi 
  * @Date: 2017-11-23 10:03:38 
  * @Last Modified by: yu yi
- * @Last Modified time: 2018-04-10 15:02:45
+ * @Last Modified time: 2018-04-12 10:53:35
  */
 <template>
   <div class="player" v-if="playlist.length >0">
@@ -19,7 +19,7 @@
           </div>
           <!-- 歌曲名称及歌手 -->
           <h1 class="title">{{currentSong.name}}</h1>
-          <h2 class="subtitle">{{currentSong.artists[0].name}}</h2>
+          <h2 class="subtitle">--- {{currentSong.artists[0].name}} ---</h2>
         </div>
         <div class="middle" @touchstart.prevent="middleTouchStart" @touchmove.prevent="middleTouchMove" @touchend="middleTouchEnd">
           <!-- 唱片 -->
@@ -549,13 +549,13 @@ export default {
         @include no-wrap();
         font-size: $font-size-medium;
         font-weight: bold;
-        color: $color-text;
+        color: $color-background;
       }
       .subtitle {
         line-height: 0.4rem;
         text-align: center;
         font-size: $font-size-small;
-        color: $color-text;
+        color: $color-background;
       }
     }
     .middle {
@@ -631,7 +631,7 @@ export default {
             color: $color-text-l;
             font-size: $font-size-medium;
             &.current {
-              color: $color-text;
+              color: $color-theme;
             }
           }
         }
@@ -655,7 +655,7 @@ export default {
           &.active {
             width: 0.4rem;
             border-radius: 0.1rem;
-            background: $color-text-ll;
+            background: $color-theme;
           }
         }
       }

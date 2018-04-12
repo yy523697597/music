@@ -2,7 +2,7 @@
  * @Author: yu yi 
  * @Date: 2017-11-24 15:04:11 
  * @Last Modified by: yu yi
- * @Last Modified time: 2017-11-29 15:02:49
+ * @Last Modified time: 2018-04-12 10:50:30
  */
 <template>
   <div class="progress-bar" ref="progressBar" @click="progressClick">
@@ -120,7 +120,6 @@ export default {
       box-sizing: border-box;
       width: 16px;
       height: 16px;
-      border: 3px solid $color-text;
       border-radius: 50%;
       background: $color-theme;
     }
