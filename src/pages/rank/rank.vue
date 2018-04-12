@@ -2,7 +2,7 @@
   <div class="rank" ref="rank">
     <scroll class="toplist" :data="officialInfo" ref="topList">
       <!-- 官方榜 -->
-      <ul class="container">
+      <ul class="container" v-show="showRank">
         <span class="rank-title">官方榜</span>
         <li class="item" v-for="(officialRankItem,index) of officialInfo" :key="index" @click="selectItem(officialRankItem)">
           <div class="icon">
@@ -16,7 +16,7 @@
           </ul>
         </li>
       </ul>
-      <div class="loading-container" v-show="!officialInfo">
+      <div class="loading-container" v-show="!showRank">
         <loading></loading>
       </div>
     </scroll>
@@ -38,7 +38,8 @@ export default {
     return {
       // 官方榜单
       officialInfo: [],
-      idxOfficial: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+      idxOfficial: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      showRank: false
     };
   },
   methods: {
@@ -85,6 +86,7 @@ export default {
       });
       // 使用Promise.all来保证并发的异步的顺序，对比使用递归的方法，速度有极大的提升
       this.officialInfo = await Promise.all(tempArr);
+      this.showRank = true;
     },
     _getRankContent(index) {},
     // 优化有mini播放器的页面状态
