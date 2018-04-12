@@ -71,12 +71,16 @@ export default {
     }
   },
   methods: {
+    // 判断是否有mini播放器
     handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? '1.2rem' : '';
       this.$refs.shortcutWrapper.style.bottom = bottom;
-      this.$refs.shortcut.refresh();
       this.$refs.searchResult.style.bottom = bottom;
-      this.$refs.suggest.refresh();
+      // 需要在nextTick中调用，否则会报错
+      this.$nextTick(() => {
+        this.$refs.shortcut.refresh();
+        this.$refs.suggest.refresh();
+      });
     },
     onQueryChange(newquery) {
       this.query = newquery;
