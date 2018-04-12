@@ -87,6 +87,7 @@ export default {
       // 使用Promise.all来保证并发的异步的顺序，对比使用递归的方法，速度有极大的提升
       this.officialInfo = await Promise.all(tempArr);
       this.showRank = true;
+      console.log('成功获取排行榜');
     },
     _getRankContent(index) {},
     // 优化有mini播放器的页面状态

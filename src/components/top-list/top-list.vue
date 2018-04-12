@@ -28,7 +28,7 @@ export default {
   methods: {
     // 获取榜单详情
     _getRankDetail() {
-      const rankDetailUrl = `${this.HOST}//playlist/detail?id=${
+      const rankDetailUrl = `${this.HOST}/playlist/detail?id=${
         this.topList.id
       }`;
       this.$http.get(rankDetailUrl).then(res => {
