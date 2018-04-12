@@ -62,7 +62,7 @@ export default {
   border-radius: 0.12rem;
   .icon-search {
     font-size: 0.48rem;
-    color: $color-background;
+    color: $color-text-d;
   }
   .box {
     flex: 1;
@@ -77,7 +77,7 @@ export default {
   }
   .icon-dismiss {
     font-size: 0.32rem;
-    color: $color-background;
+    color: $color-text-d;
   }
 }
 </style>
