@@ -29,7 +29,7 @@
           </ul>
         </div>
       </div>
-      <div class="loading-container" v-show="!playLists.length">
+      <div class="loading-container" v-show="showLoading">
         <loading></loading>
       </div>
     </scroll>
@@ -49,11 +49,17 @@ export default {
   mixins: [playlistMixin],
   data() {
     return {
+      // 首页banner
       banners: [],
+      // 推荐歌单
       playLists: [],
       loadedImg: false,
-      // 获取的全部歌单
-      allPlayLists: []
+      // 请求偏移参数
+      offset: 20,
+      // 是否正在请求数据
+      requesting: false,
+      // 是否显示加载动画
+      showLoading: true
     };
   },
   components: {
@@ -86,6 +92,7 @@ export default {
     _getBanners() {
       // 获取banner数据
       const url = this.HOST + '/banner';
+
       this.$http.get(url).then(res => {
         if (res.status === ERR_OK) {
           this.banners = res.data.banners;
@@ -94,11 +101,16 @@ export default {
     },
     // 获取推荐歌单
     _getPlaylists() {
-      const url = this.HOST + '/top/playlist?limit=200&order=hot';
+      const url = this.HOST + `/top/playlist?limit=${this.offset}&order=hot`;
+      this.requesting = true;
+      this.showLoading = true;
       this.$http.get(url).then(res => {
         if (res.status === ERR_OK) {
-          this.allPlayLists = res.data.playlists;
-          this.playLists = this.allPlayLists.splice(0, 10);
+          console.log(`成功请求推荐歌单---${this.offset}`);
+          this.playLists = this.playLists.concat(res.data.playlists);
+          this.offset += 20;
+          this.requesting = false;
+          this.showLoading = false;
         }
       });
     },
@@ -117,13 +129,8 @@ export default {
     },
     // 上拉加载更多
     pullingUp() {
-      const length = this.allPlayLists.length;
-      if (length >= 10) {
-        this.playLists = this.playLists.concat(this.allPlayLists.splice(0, 10));
-      } else if (length > 0 && length < 10) {
-        this.playLists = this.playLists.concat(
-          this.allPlayLists.splice(0, length)
-        );
+      if (!this.requesting) {
+        this._getPlaylists();
       }
     },
     ...mapMutations({
