@@ -11,7 +11,7 @@
           <ul class="songlist">
             <li class="song" v-for="(song,index) of officialRankItem.songs" :key="index">
               <span>{{index+1}}</span>
-              <span>{{song.name}} - {{song.artists[0].name}}</span>
+              <span>{{song.name}} - {{song.ar[0].name}}</span>
             </li>
           </ul>
         </li>
@@ -38,7 +38,7 @@ export default {
     return {
       // 官方榜单
       officialInfo: [],
-      idxOfficial: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      idxOfficial: [0, 1, 2, 3, 4, 5, 6, 7],
       showRank: false
     };
   },
@@ -66,22 +66,14 @@ export default {
           // 获取排行榜歌单的id
           let id = res.data.playlist.id;
           let title = res.data.playlist.name;
-          // 根据返回的排行榜id，使用获取歌单详情的接口去获取排行榜歌曲
-          let rankDetailUrl = `${this.HOST}/playlist/detail?id=${
-            res.data.playlist.id
-          }`;
-
-          let detail = await this.$http.get(rankDetailUrl);
-          if (detail.data.code === ERR_OK) {
-            // 定义一个临时对象，用于存储排行榜的封面和3首歌曲,歌单id
-            let temp = {
-              title,
-              id,
-              avatar,
-              songs: detail.data.result.tracks.splice(0, 3)
-            };
-            return temp;
-          }
+          let temp = {
+            title,
+            id,
+            avatar,
+            songs: res.data.playlist.tracks.splice(0, 3)
+          };
+          console.log(temp);
+          return temp;
         }
       });
       // 使用Promise.all来保证并发的异步的顺序，对比使用递归的方法，速度有极大的提升
