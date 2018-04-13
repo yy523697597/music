@@ -80,7 +80,6 @@ export default {
       this.showRank = true;
       console.log('成功获取排行榜');
     },
-    _getRankContent(index) {},
     // 优化有mini播放器的页面状态
     handlePlaylist(playlist) {
       const bottom = playlist.length ? '1.2rem' : '';
