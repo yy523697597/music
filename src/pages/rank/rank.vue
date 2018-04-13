@@ -72,7 +72,6 @@ export default {
             avatar,
             songs: res.data.playlist.tracks.splice(0, 3)
           };
-          console.log(temp);
           return temp;
         }
       });
