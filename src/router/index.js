@@ -1,48 +1,15 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 Vue.use(Router);
-// import Singer from 'pages/singer/singer';
-// import Recommend from 'pages/recommend/recommend';
-// import Rank from 'pages/rank/rank';
-// import Search from 'pages/search/search';
-// import SingerDetail from 'components/singer-detail/singer-detail';
-// import SongMenu from 'components/song-menu/song-menu';
-// import TopList from 'components/top-list/top-list';
 
-const Singer = r =>
-  require.ensure([], () => r(require('pages/singer/singer')), 'Singer');
+const Singer = () => import('pages/singer/singer');
+const Recommend = () => import('pages/recommend/recommend');
+const Rank = () => import('pages/rank/rank');
+const Search = () => import('pages/search/search');
+const SingerDetail = () => import('components/singer-detail/singer-detail');
+const SongMenu = () => import('components/song-menu/song-menu');
+const TopList = () => import('components/top-list/top-list');
 
-const Recommend = r =>
-  require.ensure(
-    [],
-    () => r(require('pages/recommend/recommend')),
-    'Recommend'
-  );
-const Rank = r =>
-  require.ensure([], () => r(require('pages/rank/rank')), 'Rank');
-
-const Search = r =>
-  require.ensure([], () => r(require('pages/search/search')), 'Search');
-
-const SingerDetail = r =>
-  require.ensure(
-    [],
-    () => r(require('components/singer-detail/singer-detail')),
-    'SingerDetail'
-  );
-
-const SongMenu = r =>
-  require.ensure(
-    [],
-    () => r(require('components/song-menu/song-menu')),
-    'SongMenu'
-  );
-const TopList = r =>
-  require.ensure(
-    [],
-    () => r(require('components/top-list/top-list')),
-    'TopList'
-  );
 export default new Router({
   routes: [
     {
