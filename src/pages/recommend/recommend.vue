@@ -89,30 +89,28 @@ export default {
       });
     },
     // 获取banner数据
-    _getBanners() {
+    async _getBanners() {
       // 获取banner数据
       const url = this.HOST + '/banner';
-
-      this.$http.get(url).then(res => {
-        if (res.status === ERR_OK) {
-          this.banners = res.data.banners;
-        }
-      });
+      const res = await this.$http.get(url);
+      if (res.status === ERR_OK) {
+        console.log('成功请求banner数据');
+        this.banners = res.data.banners;
+      }
     },
     // 获取推荐歌单
-    _getPlaylists() {
+    async _getPlaylists() {
       const url = this.HOST + `/top/playlist?limit=${this.offset}&order=hot`;
       this.requesting = true;
       this.showLoading = true;
-      this.$http.get(url).then(res => {
-        if (res.status === ERR_OK) {
-          console.log(`成功请求推荐歌单---${this.offset}`);
-          this.playLists = this.playLists.concat(res.data.playlists);
-          this.offset += 20;
-          this.requesting = false;
-          this.showLoading = false;
-        }
-      });
+      const res = await this.$http.get(url);
+      if (res.status === ERR_OK) {
+        console.log(`成功请求推荐歌单---${this.offset}`);
+        this.playLists = this.playLists.concat(res.data.playlists);
+        this.offset += 20;
+      }
+      this.requesting = false;
+      this.showLoading = false;
     },
     // banner点击事件
     _bannerClick(type, url) {
