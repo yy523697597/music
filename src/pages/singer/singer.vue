@@ -22,7 +22,9 @@ export default {
       // 歌手数据
       artists: [],
       // 是否有更多歌手
-      haveMore: true
+      haveMore: true,
+      // 是否正在请求数据
+      requesting: false
     };
   },
   created() {
@@ -41,6 +43,7 @@ export default {
     // limit 获取数量
     _getSinger(offset, limit) {
       const url = this.HOST + `/top/artists?offset=${offset}&limit=${limit}`;
+      this.requesting = true;
       this.$http.get(url).then(res => {
         if (res.data.code === 200) {
           // 设置偏移
@@ -48,12 +51,15 @@ export default {
           this.haveMore = res.data.more;
           this.artists = this.artists.concat(res.data.artists);
         }
+        this.requesting = false;
       });
     },
     // 上拉加载更多
     pullingUp() {
       if (this.haveMore) {
-        this._getSinger(this.offset, this.limit);
+        if (!this.requesting) {
+          this._getSinger(this.offset, this.limit);
+        }
       } else {
         alert('我是有底线的...');
       }
