@@ -82,16 +82,17 @@ export default {
         this.$refs.suggest.refresh();
       });
     },
+    // 搜索框关键字改变
     onQueryChange(newquery) {
       this.query = newquery;
     },
     // 获取热门搜索词
-    _getHotKey() {
-      getHotKey().then(res => {
-        if (res.code === 0) {
-          this.hotKey = res.data.hotkey.slice(0, 10);
-        }
-      });
+    async _getHotKey() {
+      const res = await getHotKey();
+      if (res.code === 0) {
+        this.hotKey = res.data.hotkey.slice(0, 10);
+        console.log('成功请求热门搜索');
+      }
     },
     // 移动端输入完成，滚动列表时，隐藏输入法键盘
     blurInput() {
@@ -109,9 +110,11 @@ export default {
     deletSearch(query) {
       this.deletSearchHistory(query);
     },
+    // 显示弹窗
     showConfirm() {
       this.$refs.confirm.show();
     },
+    // 清除历史搜索记录
     clearSearchHistory() {
       this.clearSearchHistory();
     },
