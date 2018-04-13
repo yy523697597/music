@@ -1,6 +1,6 @@
 <template>
   <div class="singer" ref="singer">
-    <listview :data="artists" @pullingUp="pullingUp" @pullingDown="pullingDown" @select="selectSinger" ref="singerList"></listview>
+    <listview :data="artists" @pullingUp="pullingUp" @select="selectSinger" ref="singerList"></listview>
     <!-- 歌手详情页的子路由 -->
     <router-view/>
   </div>
@@ -41,18 +41,18 @@ export default {
     },
     // offset 起始位置
     // limit 获取数量
-    _getSinger(offset, limit) {
+    async _getSinger(offset, limit) {
       const url = this.HOST + `/top/artists?offset=${offset}&limit=${limit}`;
       this.requesting = true;
-      this.$http.get(url).then(res => {
-        if (res.data.code === 200) {
-          // 设置偏移
-          this.offset += limit;
-          this.haveMore = res.data.more;
-          this.artists = this.artists.concat(res.data.artists);
-        }
-        this.requesting = false;
-      });
+      const res = await this.$http.get(url);
+      if (res.data.code === 200) {
+        console.log(`成功请求歌手列表---${this.offset}`);
+        // 设置偏移
+        this.offset += limit;
+        this.haveMore = res.data.more;
+        this.artists = this.artists.concat(res.data.artists);
+      }
+      this.requesting = false;
     },
     // 上拉加载更多
     pullingUp() {
@@ -73,10 +73,10 @@ export default {
       this.setSinger(singer);
     },
     // 下拉刷新
-    pullingDown() {
-      this._getSinger(0, 20);
-      alert('正在努力加载...');
-    },
+    // pullingDown() {
+    //   this._getSinger(0, 20);
+    //   alert('正在努力加载...');
+    // },
     ...mapMutations({
       setSinger: 'SET_SINGER'
     })
