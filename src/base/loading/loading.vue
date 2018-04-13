@@ -37,18 +37,24 @@ export default {
 <style lang="scss" scoped>
 @import '~common/scss/variable.scss';
 .loading {
-  width: 100%;
+  width: 2rem;
   height: 2rem;
-  position: relative;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
   .desc {
+    color: #fff;
     line-height: 20px;
     font-size: $font-size-small;
-    color: $color-text-l;
     position: absolute;
-    bottom: 0;
+    bottom: 4px;
     left: 0;
     text-align: center;
-    color: #222;
     width: 100%;
   }
   .loader {
