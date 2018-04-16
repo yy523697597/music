@@ -32,12 +32,12 @@
             </li>
           </transition-group>
         </scroll>
-        <div class="list-operate">
+        <!-- <div class="list-operate">
           <div class="add">
             <i class="icon-add"></i>
             <span class="text">添加歌曲到队列</span>
           </div>
-        </div>
+        </div> -->
         <div class="list-close" @click="hide">
           <span>关闭</span>
         </div>
@@ -177,7 +177,7 @@ export default {
   top: 0;
   bottom: 0;
   z-index: 200;
-  background-color: $color-background-d;
+  background-color: $color-text-d;
 
   .list-wrapper {
     position: absolute;
@@ -230,7 +230,7 @@ export default {
           flex: 1;
           @include no-wrap();
           font-size: $font-size-medium;
-          color: $color-text-d;
+          color: $color-text-l;
         }
         .like {
           @include extend-click();
