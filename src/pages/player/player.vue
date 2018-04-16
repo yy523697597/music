@@ -782,21 +782,31 @@ export default {
         color: $color-text-d;
       }
     }
+    .progress-circle {
+      width: 0.64rem;
+      height: 0.64rem;
+      // overflow: hidden;
+      .icon-mini {
+        width: 0.64rem;
+        height: 0.64rem;
+        font-size: 0.64rem;
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+      }
+    }
     .control {
-      flex: 0 0 0.6rem;
-      width: 0.6rem;
+      flex: 0 0 0.64rem;
+      width: 0.64rem;
       padding: 0 0.2rem;
       .icon-play-mini,
       .icon-pause-mini,
       .icon-playlist {
-        font-size: 0.6rem;
-        color: $color-theme-d;
-      }
-      .icon-mini {
         font-size: 0.64rem;
-        position: absolute;
-        left: 0.02rem;
-        top: 0.18rem;
+        color: $color-theme-d;
       }
     }
   }
