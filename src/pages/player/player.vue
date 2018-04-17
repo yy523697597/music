@@ -25,7 +25,7 @@
           <!-- 唱片 -->
           <div class="middle-l" ref="cdWrapper">
             <div class="cd-wrapper">
-              <div class="cd" :class="cdCls"><img :src="currentSong.album.picUrl" alt="" class="image"></div>
+              <div class="cd" :class="cdCls"><img :src="currentSong.album.picUrl+'?imageView&thumbnail=640x0&quality=75&tostatic=0&type=jpg'" alt="" class="image"></div>
             </div>
             <!-- 当前歌词 -->
             <div class="playing-lyric-wrapper">
