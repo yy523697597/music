@@ -10,7 +10,7 @@
       <div class="normal-player" v-show="fullScreen">
         <!-- 播放器高斯模糊背景 -->
         <div class="background">
-          <img width="100%" height="100%" :src="currentSong.album.picUrl'?imageView&thumbnail=640x0&quality=100&tostatic=0&type=jpg'">
+          <img width="100%" height="100%" :src="currentSong.album.picUrl+'?imageView&thumbnail=640x0&quality=100&tostatic=0&type=jpg'">
         </div>
         <div class="top">
           <!-- 返回按钮 -->
