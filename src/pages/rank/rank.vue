@@ -6,7 +6,7 @@
         <span class="rank-title">官方榜</span>
         <li class="item" v-for="(officialRankItem,index) of officialInfo" :key="index" @click="selectItem(officialRankItem)">
           <div class="icon">
-            <img :src="officialRankItem.avatar">
+            <img :src="officialRankItem.avatar+'?imageView&thumbnail=200x0&quality=75&tostatic=0&type=jpg'">
           </div>
           <ul class="songlist">
             <li class="song" v-for="(song,index) of officialRankItem.songs" :key="index">

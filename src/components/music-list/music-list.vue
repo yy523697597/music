@@ -65,7 +65,8 @@ export default {
   computed: {
     // 控制歌手头图
     bgStyle() {
-      return `background-image:url(${this.bgImage})`;
+      return `background-image:url(${this.bgImage +
+        '?imageView&thumbnail=750x0&quality=75&tostatic=0&type=jpg'})`;
     },
     // 控制layer层的移动
     layerMove() {

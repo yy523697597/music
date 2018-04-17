@@ -4,7 +4,7 @@
       <div class="list-container">
         <ul class="list-group">
           <li v-for="(item,index) of data" class="list-group-item" :key="index" @click="_selectItem(item)">
-            <img v-lazy="item.img1v1Url" class="avatar">
+            <img v-lazy="item.img1v1Url+'?imageView&thumbnail=108x0&quality=75&tostatic=0&type=jpg'" class="avatar">
             <span class="name">{{item.name}}</span>
           </li>
         </ul>

@@ -8,7 +8,7 @@
             <div v-for="(item,index) of banners" :key="index">
               <div @click="_bannerClick(item.typeTitle,item.url)">
                 <!-- 监听图片的load事件用于初始化scroll，添加needsclick类名用于解决fastclick和better-scroll的冲突 -->
-                <img class="needsclick" @load="loadImg" :src="item.pic">
+                <img class="needsclick" @load="loadImg" :src="item.pic+'?imageView&thumbnail=750x0&quality=75&tostatic=0&type=jpg'">
               </div>
               <span class="type">{{item.typeTitle}}</span>
             </div>
@@ -19,7 +19,7 @@
           <ul>
             <li class="item" v-for="(item,index) of playLists" :key="index" @click="selectItem(item)">
               <div class="icon">
-                <img v-lazy="item.coverImgUrl">
+                <img v-lazy="item.coverImgUrl+'?imageView&thumbnail=80x0&quality=75&tostatic=0&type=jpg'">
               </div>
               <div class="text">
                 <h2 class="name">{{item.name}}</h2>
