@@ -84,7 +84,7 @@
     <!-- mini播放器 -->
     <transition name="mini ">
       <div class="mini-player " v-show="!fullScreen " @click="open ">
-        <div class="icon "><img width="40 " height="40 " :src="currentSong.album.picUrl " :class="cdCls "></div>
+        <div class="icon "><img width="40 " height="40 " :src="currentSong.album.picUrl+'?imageView&thumbnail=640x0&quality=100&tostatic=0&type=jpg'" :class="cdCls "></div>
         <div class="text ">
           <h2 class="name ">{{currentSong.name}}</h2>
           <p class="desc ">{{currentSong.artists[0].name}}</p>
