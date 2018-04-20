@@ -2,7 +2,7 @@
  * @Author: yu yi
  * @Date: 2017-11-29 13:51:39
  * @Last Modified by: yu yi
- * @Last Modified time: 2018-03-27 10:28:03
+ * @Last Modified time: 2018-04-20 10:48:45
  */
 
 // 打乱数组排序,不会修改原来的数组
@@ -43,4 +43,43 @@ export function getQueryString(name, url) {
   }
   if (r != null) return unescape(r[2]);
   return null;
+}
+
+/**
+ * 快速判断UA信息
+ * @param {*} name
+ */
+export function uais(name) {
+  let ua = navigator.userAgent.toLowerCase();
+  let is = false;
+  switch (name) {
+    case 'weixin':
+      is = ua.match(/(micromessenger|qq|txmicroblog);?/i);
+      break;
+    case 'ios':
+      is = ua.match(/(iphone|ipod|ipad);?/i);
+      break;
+    case 'browser':
+      is = ua.match(/(applewebkit);?/i);
+      break;
+    // 如果为咪咕客户端
+    case 'migu':
+      is = uais('android-migu') || uais('ios-migu');
+      break;
+    case 'android-migu':
+      is = window.migumusicjs
+        ? true
+        : location.href.match(/(ua=Android|ua=Android_sst);?/i);
+      break;
+    case 'ios-migu':
+      if (!window.migumusicjs) {
+        is =
+          ua.match(/(mobilemusic);?/i) ||
+          location.href.match(/(ua=Iphone_Sst);?/i);
+      }
+      break;
+    default:
+      is = ua.indexOf(name) > -1;
+  }
+  return is;
 }

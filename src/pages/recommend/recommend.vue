@@ -8,7 +8,7 @@
             <div v-for="(item,index) of banners" :key="index">
               <div @click="_bannerClick(item.typeTitle,item.url)">
                 <!-- 监听图片的load事件用于初始化scroll，添加needsclick类名用于解决fastclick和better-scroll的冲突 -->
-                <img class="needsclick" @load="loadImg" :src="item.pic+'?imageView&thumbnail=750x0&quality=75&tostatic=0&type=jpg'">
+                <img class="needsclick" @load="loadImg" :src="item.pic+(isIos?'?imageView&thumbnail=750x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=750x0&quality=75&tostatic=0&type=webp')">
               </div>
               <span class="type">{{item.typeTitle}}</span>
             </div>
@@ -19,7 +19,7 @@
           <ul>
             <li class="item" v-for="(item,index) of playLists" :key="index" @click="selectItem(item)">
               <div class="icon">
-                <img v-lazy="item.coverImgUrl+'?imageView&thumbnail=80x0&quality=75&tostatic=0&type=jpg'">
+                <img v-lazy="item.coverImgUrl+(isIos?'?imageView&thumbnail=750x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=80x0&quality=75&tostatic=0&type=webp')">
               </div>
               <div class="text">
                 <h2 class="name">{{item.name}}</h2>
@@ -39,6 +39,7 @@
 </template>
 <script>
 import { ERR_OK } from 'api/config';
+import { uais } from 'common/js/util';
 import Slider from 'base/slider/slider';
 import Scroll from 'base/scroll/scroll';
 import Loading from 'base/loading/loading';
@@ -59,7 +60,8 @@ export default {
       // 是否正在请求数据
       requesting: false,
       // 是否显示加载动画
-      showLoading: true
+      showLoading: true,
+      isIos: false
     };
   },
   components: {
@@ -68,6 +70,7 @@ export default {
     Loading
   },
   created() {
+    this.isIos = uais('ios');
     this._getBanners();
     this._getPlaylists();
   },
