@@ -31,6 +31,8 @@ import Scroll from 'base/scroll/scroll';
 import Loading from 'base/loading/loading';
 import { mapActions } from 'vuex';
 import { playlistMixin } from 'common/js/mixin';
+import { uais } from 'common/js/util';
+
 // 歌手名字的保留高度
 const RESERVED_HEIGHT = 40;
 
@@ -59,14 +61,18 @@ export default {
   data() {
     return {
       scrollY: 0,
-      imageHeight: 0
+      imageHeight: 0,
+      // 是否是ios系统
+      isIos: false
     };
   },
   computed: {
     // 控制歌手头图
     bgStyle() {
       return `background-image:url(${this.bgImage +
-        '?imageView&thumbnail=750x0&quality=75&tostatic=0&type=jpg'})`;
+        (this.isIos
+          ? '?imageView&thumbnail=750x0&quality=80&tostatic=0&type=jpg'
+          : '_.webp?imageView&thumbnail=750x0&quality=80&tostatic=0&type=webp')})`;
     },
     // 控制layer层的移动
     layerMove() {
@@ -111,6 +117,7 @@ export default {
     ...mapActions(['selectPlay', 'randomPlay'])
   },
   created() {
+    this.isIos = uais('ios');
     // scroll节流参数
     this.probeType = 3;
     // scroll监听滚动

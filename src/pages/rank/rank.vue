@@ -6,7 +6,7 @@
         <span class="rank-title">官方榜</span>
         <li class="item" v-for="(officialRankItem,index) of officialInfo" :key="index" @click="selectItem(officialRankItem)">
           <div class="icon">
-            <img :src="officialRankItem.avatar+'?imageView&thumbnail=200x0&quality=75&tostatic=0&type=jpg'">
+            <img :src="officialRankItem.avatar+(isIos?'?imageView&thumbnail=200x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=200x0&quality=75&tostatic=0&type=webp')">
           </div>
           <ul class="songlist">
             <li class="song" v-for="(song,index) of officialRankItem.songs" :key="index">
@@ -30,6 +30,7 @@ import Scroll from 'base/scroll/scroll';
 import { ERR_OK } from 'common/js/config';
 import { playlistMixin } from 'common/js/mixin';
 import { mapMutations } from 'vuex';
+import { uais } from 'common/js/util';
 
 export default {
   mixins: [playlistMixin],
@@ -39,7 +40,9 @@ export default {
       // 官方榜单
       officialInfo: [],
       idxOfficial: [0, 1, 2, 3, 4, 5, 6, 7],
-      showRank: false
+      showRank: false,
+      // 是否是ios系统
+      isIos: false
     };
   },
   methods: {
@@ -94,6 +97,7 @@ export default {
   },
   components: { Loading, Scroll },
   created() {
+    this.isIos = uais('ios');
     this._getRankInfo();
   }
 };

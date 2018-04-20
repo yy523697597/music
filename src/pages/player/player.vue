@@ -2,7 +2,7 @@
  * @Author: yu yi 
  * @Date: 2017-11-23 10:03:38 
  * @Last Modified by: yu yi
- * @Last Modified time: 2018-04-12 10:53:35
+ * @Last Modified time: 2018-04-20 11:11:59
  */
 <template>
   <div class="player" v-if="playlist.length >0">
@@ -10,7 +10,7 @@
       <div class="normal-player" v-show="fullScreen">
         <!-- 播放器高斯模糊背景 -->
         <div class="background">
-          <img width="100%" height="100%" :src="currentSong.album.picUrl+'?imageView&thumbnail=640x0&quality=100&tostatic=0&type=jpg'">
+          <img width="100%" height="100%" :src="currentSong.album.picUrl+(isIos?'?imageView&thumbnail=640x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=640x0&quality=75&tostatic=0&type=webp')">
         </div>
         <div class="top">
           <!-- 返回按钮 -->
@@ -25,7 +25,7 @@
           <!-- 唱片 -->
           <div class="middle-l" ref="cdWrapper">
             <div class="cd-wrapper">
-              <div class="cd" :class="cdCls"><img :src="currentSong.album.picUrl+'?imageView&thumbnail=640x0&quality=100&tostatic=0&type=jpg'" alt="" class="image"></div>
+              <div class="cd" :class="cdCls"><img :src="currentSong.album.picUrl+(isIos?'?imageView&thumbnail=640x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=640x0&quality=75&tostatic=0&type=webp')" alt="" class="image"></div>
             </div>
             <!-- 当前歌词 -->
             <div class="playing-lyric-wrapper">
@@ -84,7 +84,7 @@
     <!-- mini播放器 -->
     <transition name="mini ">
       <div class="mini-player " v-show="!fullScreen " @click="open ">
-        <div class="icon "><img width="40 " height="40 " :src="currentSong.album.picUrl+'?imageView&thumbnail=640x0&quality=100&tostatic=0&type=jpg'" :class="cdCls "></div>
+        <div class="icon "><img width="40 " height="40 " :src="currentSong.album.picUrl+(isIos?'?imageView&thumbnail=640x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=640x0&quality=75&tostatic=0&type=webp')" :class="cdCls "></div>
         <div class="text ">
           <h2 class="name ">{{currentSong.name}}</h2>
           <p class="desc ">{{currentSong.artists[0].name}}</p>
@@ -118,11 +118,14 @@ import Scroll from 'base/scroll/scroll';
 import Playlist from 'components/playlist/playlist';
 import { playerMixin } from 'common/js/mixin';
 import { playMode } from 'common/js/config.js';
+import { uais } from 'common/js/util';
 
 export default {
   mixins: [playerMixin],
   data() {
     return {
+      // 是否是ios系统
+      isIos: false,
       // 音乐播放地址
       playUrl: '',
       // 歌曲是否可播放
@@ -457,6 +460,7 @@ export default {
     Playlist
   },
   created() {
+    this.isIos = uais('ios');
     // 关联一个触摸对象，用于切换唱片与歌词
     this.touch = {};
   },

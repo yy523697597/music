@@ -4,7 +4,7 @@
       <div class="list-container">
         <ul class="list-group">
           <li v-for="(item,index) of data" class="list-group-item" :key="index" @click="_selectItem(item)">
-            <img v-lazy="item.img1v1Url+'?imageView&thumbnail=108x0&quality=75&tostatic=0&type=jpg'" class="avatar">
+            <img v-lazy="item.img1v1Url+(isIos?'?imageView&thumbnail=108x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=108x0&quality=75&tostatic=0&type=webp')" class="avatar">
             <span class="name">{{item.name}}</span>
           </li>
         </ul>
@@ -18,7 +18,14 @@
 <script>
 import Scroll from 'base/scroll/scroll';
 import Loading from 'base/loading/loading';
+import { uais } from 'common/js/util';
 export default {
+  data() {
+    return {
+      // 是否是ios系统
+      isIos: false
+    };
+  },
   components: {
     Scroll,
     Loading
@@ -44,6 +51,9 @@ export default {
     refresh() {
       this.$refs.listview.refresh();
     }
+  },
+  created() {
+    this.isIos = uais('ios');
   }
 };
 </script>

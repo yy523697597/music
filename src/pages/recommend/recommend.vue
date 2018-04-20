@@ -19,7 +19,7 @@
           <ul>
             <li class="item" v-for="(item,index) of playLists" :key="index" @click="selectItem(item)">
               <div class="icon">
-                <img v-lazy="item.coverImgUrl+(isIos?'?imageView&thumbnail=750x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=80x0&quality=75&tostatic=0&type=webp')">
+                <img v-lazy="item.coverImgUrl+(isIos?'?imageView&thumbnail=80x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=80x0&quality=75&tostatic=0&type=webp')">
               </div>
               <div class="text">
                 <h2 class="name">{{item.name}}</h2>

@@ -2,7 +2,7 @@
  * @Author: yu yi
  * @Date: 2017-11-29 13:51:39
  * @Last Modified by: yu yi
- * @Last Modified time: 2018-04-20 10:48:45
+ * @Last Modified time: 2018-04-20 10:56:25
  */
 
 // 打乱数组排序,不会修改原来的数组
@@ -61,22 +61,6 @@ export function uais(name) {
       break;
     case 'browser':
       is = ua.match(/(applewebkit);?/i);
-      break;
-    // 如果为咪咕客户端
-    case 'migu':
-      is = uais('android-migu') || uais('ios-migu');
-      break;
-    case 'android-migu':
-      is = window.migumusicjs
-        ? true
-        : location.href.match(/(ua=Android|ua=Android_sst);?/i);
-      break;
-    case 'ios-migu':
-      if (!window.migumusicjs) {
-        is =
-          ua.match(/(mobilemusic);?/i) ||
-          location.href.match(/(ua=Iphone_Sst);?/i);
-      }
       break;
     default:
       is = ua.indexOf(name) > -1;
