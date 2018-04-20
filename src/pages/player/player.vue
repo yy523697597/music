@@ -2,7 +2,7 @@
  * @Author: yu yi 
  * @Date: 2017-11-23 10:03:38 
  * @Last Modified by: yu yi
- * @Last Modified time: 2018-04-20 11:11:59
+ * @Last Modified time: 2018-04-20 16:14:03
  */
 <template>
   <div class="player" v-if="playlist.length >0">
@@ -104,7 +104,7 @@
       </div>
     </transition>
     <playlist ref="playlist"> </playlist>
-    <audio :src="playUrl" ref="music" @canplay="ready" @error="onError" @timeupdate="updateTime" @ended="musicEnd"></audio>
+    <audio :src="playUrl" ref="music" @canplay="ready" @error="onError" @timeupdate="updateTime" @ended="musicEnd" preload="auto"></audio>
 
   </div>
 </template>
@@ -182,6 +182,9 @@ export default {
     // 切换歌曲播放状态
     togglePlaying() {
       this.setPlayingState(!this.playing);
+      if (this.isIos) {
+        this.$refs.music.play();
+      }
     },
     // 切换上一首歌
     prev() {
@@ -475,7 +478,9 @@ export default {
       if (oldSong && newSong.id === oldSong.id) {
         return;
       }
-
+      if (this.isIos) {
+        this.songReady = true;
+      }
       this._getMusicPlayUrl(newSong.id);
 
       // 切换歌曲时，重新定位歌词到顶部

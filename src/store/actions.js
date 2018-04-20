@@ -2,13 +2,13 @@
  * @Author: yu yi
  * @Date: 2017-11-23 11:04:07
  * @Last Modified by: yu yi
- * @Last Modified time: 2018-03-27 16:00:12
+ * @Last Modified time: 2018-04-20 16:12:13
  */
 
 // 选择歌曲
 import * as types from './mutation-types';
 import { playMode } from 'common/js/config';
-import { shuffle } from 'common/js/util';
+import { shuffle, uais } from 'common/js/util';
 import { saveSearch, deleteSearchHistory, clearSearch } from 'common/js/cache';
 
 // 点击歌曲进行播放
@@ -25,8 +25,14 @@ export const selectPlay = function({ commit, state }, { list, index }) {
   commit(types.SET_CURRENT_INDEX, index);
   // 打开全屏播放器
   commit(types.SET_FULL_SCREEN, true);
-  // 更改播放状态为正在播放
-  commit(types.SET_PLAYING_STATE, true);
+
+  // 如果是ios无法触发audio的自动播放，所以只能是让播放状态为暂停，让用户自己手动再点击一次播放
+  if (uais('ios')) {
+    commit(types.SET_PLAYING_STATE, false);
+  } else {
+    // 更改播放状态为正在播放
+    commit(types.SET_PLAYING_STATE, true);
+  }
 };
 
 // 获取歌曲在歌曲列表中的索引
