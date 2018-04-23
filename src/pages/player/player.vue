@@ -2,7 +2,7 @@
  * @Author: yu yi 
  * @Date: 2017-11-23 10:03:38 
  * @Last Modified by: yu yi
- * @Last Modified time: 2018-04-20 16:14:03
+ * @Last Modified time: 2018-04-23 11:12:34
  */
 <template>
   <div class="player" v-if="playlist.length >0">
@@ -25,7 +25,7 @@
           <!-- 唱片 -->
           <div class="middle-l" ref="cdWrapper">
             <div class="cd-wrapper">
-              <div class="cd" :class="cdCls"><img :src="currentSong.album.picUrl+(isIos?'?imageView&thumbnail=640x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=640x0&quality=75&tostatic=0&type=webp')" alt="" class="image"></div>
+              <div ref="cdContainer"><img ref="cd" :src="currentSong.album.picUrl+(isIos?'?imageView&thumbnail=640x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=640x0&quality=75&tostatic=0&type=webp')" class="image cd"></div>
             </div>
             <!-- 当前歌词 -->
             <div class="playing-lyric-wrapper">
@@ -84,7 +84,7 @@
     <!-- mini播放器 -->
     <transition name="mini ">
       <div class="mini-player " v-show="!fullScreen " @click="open ">
-        <div class="icon "><img width="40 " height="40 " :src="currentSong.album.picUrl+(isIos?'?imageView&thumbnail=640x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=640x0&quality=75&tostatic=0&type=webp')" :class="cdCls "></div>
+        <div class="icon "><img width="40 " height="40 " :src="currentSong.album.picUrl+(isIos?'?imageView&thumbnail=640x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=640x0&quality=75&tostatic=0&type=webp')"></div>
         <div class="text ">
           <h2 class="name ">{{currentSong.name}}</h2>
           <p class="desc ">{{currentSong.artists[0].name}}</p>
@@ -154,9 +154,9 @@ export default {
       return this.playing ? 'icon-pause-mini' : 'icon-play-mini';
     },
     // 添加播放器旋转动画
-    cdCls() {
-      return this.playing ? 'play' : 'play pause';
-    },
+    // cdCls() {
+    //   return this.playing ? 'play' : 'pause';
+    // },
     // 按钮不可点击样式
     disableCls() {
       return this.songReady ? '' : 'disable';
@@ -183,7 +183,15 @@ export default {
     togglePlaying() {
       this.setPlayingState(!this.playing);
       if (this.isIos) {
-        this.$refs.music.play();
+        const music = this.$refs.music;
+        this.playing ? music.play() : music.pause();
+        // 暂停歌曲播放后，也应该暂停歌词的播放
+        // 重新播放歌曲后，需要让当前歌词去跳转到相应的播放进度
+        if (this.currentLyric) {
+          this.playing
+            ? this.currentLyric.seek(this.$refs.music.currentTime * 1000)
+            : this.currentLyric.stop();
+        }
       }
     },
     // 切换上一首歌
@@ -202,8 +210,13 @@ export default {
       // 设置歌曲索引
       this.setCurrentIndex(index);
       // 切换播放器按钮状态
-      if (!this.playing) {
+      if (!this.playing && !this.isIos) {
         this.togglePlaying();
+      }
+      // 如果是ios系统，切换时必须是暂停状态
+      if (this.isIos) {
+        this.$refs.music.currentTime = 0;
+        this.setPlayingState(false);
       }
       // 更改歌曲ready状态
       this.songReady = false;
@@ -223,8 +236,14 @@ export default {
       }
 
       this.setCurrentIndex(index);
-      if (!this.playing) {
+      if (!this.playing && !this.isIos) {
         this.togglePlaying();
+      }
+
+      // 如果是ios系统，切换时必须是暂停状态
+      if (this.isIos) {
+        this.$refs.music.currentTime = 0;
+        this.setPlayingState(false);
       }
       this.songReady = false;
     },
@@ -240,7 +259,9 @@ export default {
     // 歌曲缓冲好可以播了
     ready() {
       this.songReady = true;
-      this.$refs.music.play();
+      if (!this.isIos) {
+        this.$refs.music.play();
+      }
     },
     // 歌曲缓冲出错
     onError() {
@@ -254,6 +275,26 @@ export default {
       } else {
         this.next();
       }
+    },
+    // 暂停音乐播放器封面旋转
+    pauseCd() {
+      const cd = this.$refs.cd;
+      const container = this.$refs.cdContainer;
+      const cdContainerTransform = window.getComputedStyle(container).transform;
+      const cdTransform = window.getComputedStyle(cd).transform;
+      container.style.transform =
+        cdContainerTransform === 'none'
+          ? cdTransform
+          : cdTransform.concat(' ', cdContainerTransform);
+      cd.classList.remove('play');
+    },
+    // 开始音乐播放器封面旋转
+    playCd() {
+      this.$refs.cd.classList.add('play');
+    },
+    resetCd() {
+      this.$refs.cdContainer.style.transform = 'none';
+      this.$refs.cd.style.transform = 'none';
     },
     // 更新播放器播放时间
     updateTime(e) {
@@ -351,6 +392,8 @@ export default {
       this.$http.get(url).then(res => {
         if (res.data.code === 200) {
           this.playUrl = res.data.data[0].url;
+          // 切换一首新歌之后，需要重置cd的旋转角度
+          this.resetCd();
         }
       });
     },
@@ -495,7 +538,8 @@ export default {
       const music = this.$refs.music;
       this.$nextTick(() => {
         // 歌曲准备好之后，才能播放和暂停
-        if (this.songReady) {
+        this.playing ? this.playCd() : this.pauseCd();
+        if (this.songReady && !this.isIos) {
           this.playing ? music.play() : music.pause();
           // 暂停歌曲播放后，也应该暂停歌词的播放
           // 重新播放歌曲后，需要让当前歌词去跳转到相应的播放进度
@@ -596,9 +640,6 @@ export default {
             border-radius: 50%;
             &.play {
               animation: rotate 32s linear infinite;
-            }
-            &.pause {
-              animation-play-state: paused;
             }
             .image {
               position: absolute;
