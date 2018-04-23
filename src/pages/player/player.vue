@@ -2,7 +2,7 @@
  * @Author: yu yi 
  * @Date: 2017-11-23 10:03:38 
  * @Last Modified by: yu yi
- * @Last Modified time: 2018-04-23 11:12:34
+ * @Last Modified time: 2018-04-23 11:22:55
  */
 <template>
   <div class="player" v-if="playlist.length >0">
@@ -600,7 +600,7 @@ export default {
         line-height: 0.8rem;
         text-align: center;
         @include no-wrap();
-        font-size: $font-size-medium;
+        font-size: $font-size-large;
         font-weight: bold;
         color: $color-background;
       }
