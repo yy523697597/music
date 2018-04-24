@@ -4,7 +4,7 @@
       <slot></slot>
     </div>
     <div class="dots">
-      <span class="dot" v-for="(item,index) of dots" :key="index" :class="{'active':currentPageIndex===index}"></span>
+      <span class="dot" v-for="(item,index) of dots" :key="index" :class="{'active':currentPageIndex===(index-1)}"></span>
     </div>
   </div>
 </template>
@@ -16,7 +16,7 @@ export default {
   data() {
     return {
       dots: [],
-      currentPageIndex: 0
+      currentPageIndex: -1
     };
   },
   props: {
@@ -41,10 +41,7 @@ export default {
       this._setSliderWidth();
       this._initDots();
       this._initSlider();
-
-      if (this.autoPlay) {
-        this._play();
-      }
+      this._play();
 
       // 修复调整窗口大小造成的轮播图宽度问题
       window.addEventListener('resize', () => {
@@ -115,9 +112,11 @@ export default {
         if (this.loop) {
           pageIndex -= 1;
         }
+        console.log('显示完成', pageIndex);
         this.currentPageIndex = pageIndex;
 
         if (this.autoPlay) {
+          console.log(21344);
           // 需要先清除timer,不然的话有可能会切换一页后,又马上切换一页
           clearTimeout(this.timer);
           this._play();
@@ -130,6 +129,10 @@ export default {
       if (this.loop) {
         pageIndex += 1;
       }
+      if (pageIndex >= this.dots.length) {
+        pageIndex = 0;
+      }
+      console.log('正在显示', pageIndex);
       this.timer = setTimeout(() => {
         // 使用goToPage方法可以跳转到指定页面
         this.slider.goToPage(pageIndex, 400);
