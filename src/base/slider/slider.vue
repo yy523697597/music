@@ -1,208 +1,257 @@
 <template>
-  <div class="slider" ref="slider">
-    <div class="slider-group" ref="sliderGroup">
-      <slot></slot>
+  <div class="slide" ref="slide">
+    <div class="slide-group" ref="slideGroup">
+      <slot>
+      </slot>
     </div>
-    <div class="dots">
-      <span class="dot" v-for="(item,index) of dots" :key="index" :class="{'active':currentPageIndex===(index-1)}"></span>
+    <div v-if="showDot" class="dots">
+      <span class="dot" :class="{active: currentPageIndex === index }" v-for="(item, index) in dots" :key="index"></span>
     </div>
   </div>
 </template>
-<script>
-import BScroll from 'better-scroll';
-import { addClass } from 'common/js/dom.js';
 
+<script type="text/ecmascript-6">
+import { addClass } from 'common/js/dom';
+import BScroll from 'better-scroll';
+const COMPONENT_NAME = 'slide';
 export default {
-  data() {
-    return {
-      dots: [],
-      currentPageIndex: -1
-    };
-  },
+  name: COMPONENT_NAME,
   props: {
-    // 循环
     loop: {
       type: Boolean,
       default: true
     },
-    // 自动轮播
     autoPlay: {
       type: Boolean,
       default: true
     },
-    // 自动轮播间隔
     interval: {
       type: Number,
-      default: 3000
+      default: 4000
+    },
+    showDot: {
+      type: Boolean,
+      default: true
+    },
+    click: {
+      type: Boolean,
+      default: true
+    },
+    threshold: {
+      type: Number,
+      default: 0.3
+    },
+    speed: {
+      type: Number,
+      default: 400
     }
   },
+  data() {
+    return {
+      dots: [],
+      currentPageIndex: 0
+    };
+  },
   mounted() {
-    this.$nextTick(() => {
-      this._setSliderWidth();
-      this._initDots();
-      this._initSlider();
-      this._play();
-
-      // 修复调整窗口大小造成的轮播图宽度问题
-      window.addEventListener('resize', () => {
-        if (!this.slider) {
-          return;
+    this.update();
+    window.addEventListener('resize', () => {
+      if (!this.slide || !this.slide.enabled) {
+        return;
+      }
+      clearTimeout(this.resizeTimer);
+      this.resizeTimer = setTimeout(() => {
+        if (this.slide.isInTransition) {
+          this._onScrollEnd();
         } else {
-          this._setSliderWidth(true);
-          this.slider.refresh();
+          if (this.autoPlay) {
+            this._play();
+          }
         }
-      });
+        this.refresh();
+      }, 60);
     });
   },
+  // 结合vue的周期，当slide不是活动的情况下就暂停播放，以此提高性能
+  activated() {
+    if (!this.slide) {
+      return;
+    }
+    this.slide.enable();
+    let pageIndex = this.slide.getCurrentPage().pageX;
+    this.slide.goToPage(pageIndex, 0, 0);
+    this.currentPageIndex = pageIndex;
+    if (this.autoPlay) {
+      this._play();
+    }
+  },
+  deactivated() {
+    this.slide.disable();
+    clearTimeout(this.timer);
+  },
+  beforeDestroy() {
+    this.slide.disable();
+    clearTimeout(this.timer);
+  },
   methods: {
-    // 设置slider的宽度
-    _setSliderWidth(isResize) {
-      // 获取父容器的所有子元素
-      this.children = this.$refs.sliderGroup.children;
-      let width = 0;
-      // 获取最外层容器的宽度
-      let sliderWidth = this.$refs.slider.clientWidth;
-
-      for (let i = 0; i < this.children.length; i++) {
-        let child = this.children[i];
-        // 为slider的item添加 slider-item的className
-        addClass(child, 'slider-item');
-        // 设置item的宽度为最外层容器的宽度
-        child.style.width = sliderWidth + 'px';
-        width += sliderWidth;
+    // 更新slider
+    update() {
+      if (this.slide) {
+        this.slide.destroy();
       }
-
-      // 如果开启循环,需要在前后多加一张图片,共两张
-      if (this.loop && !isResize) {
-        width += 2 * sliderWidth;
-      }
-
-      // 设置父容器的宽度
-      this.$refs.sliderGroup.style.width = width + 'px';
+      this.$nextTick(() => {
+        this.init();
+      });
     },
-    // 初始化指示点dots
-    _initDots() {
-      this.dots = new Array(this.children.length);
+    // 刷新slider
+    refresh() {
+      this._setSlideWidth(true);
+      this.slide.refresh();
+    },
+    // 上一张
+    prev() {
+      this.slide.prev();
+    },
+    // 下一张
+    next() {
+      this.slide.next();
     },
     // 初始化slider
-    _initSlider() {
-      this.slider = new BScroll(this.$refs.slider, {
-        // 允许点击
-        click: true,
-        // 允许横向滚动
+    init() {
+      clearTimeout(this.timer);
+      this.currentPageIndex = 0;
+      this._setSlideWidth();
+      if (this.showDot) {
+        this._initDots();
+      }
+      this._initSlide();
+      if (this.autoPlay) {
+        this._play();
+      }
+    },
+    // 设置slider的宽度
+    _setSlideWidth(isResize) {
+      this.children = this.$refs.slideGroup.children;
+      let width = 0;
+      let slideWidth = this.$refs.slide.clientWidth;
+      for (let i = 0; i < this.children.length; i++) {
+        let child = this.children[i];
+        addClass(child, 'slide-item');
+        child.style.width = slideWidth + 'px';
+        width += slideWidth;
+      }
+      // 如果开启了循环，前后会多两张图片，所以宽度要加两张图片
+      if (this.loop && !isResize) {
+        width += 2 * slideWidth;
+      }
+      this.$refs.slideGroup.style.width = width + 'px';
+    },
+    _initSlide() {
+      console.log(this.threshold);
+      this.slide = new BScroll(this.$refs.slide, {
         scrollX: true,
-        // 不允许纵向滚动
         scrollY: false,
-        // 取消惯性
         momentum: false,
-        // 轮播图需要开启此选项
         snap: {
-          // 循环
           loop: this.loop,
-          // 滑动切换阈值
-          threshold: 0.1,
-          // 切换动画速度
-          speed: 400
-        }
+          threshold: this.threshold,
+          speed: this.speed
+        },
+        bounce: false,
+        stopPropagation: true,
+        click: this.click
       });
-      // 监听图片滚动完成事件
-      this.slider.on('scrollEnd', () => {
-        let pageIndex = this.slider.getCurrentPage().pageX;
-        // 开启循环的话,头部会多一个图片,所以需要减一
-        if (this.loop) {
-          pageIndex -= 1;
-        }
-        console.log('显示完成', pageIndex);
-        this.currentPageIndex = pageIndex;
-
+      this.slide.on('scrollEnd', this._onScrollEnd);
+      this.slide.on('touchEnd', () => {
         if (this.autoPlay) {
-          console.log(21344);
-          // 需要先清除timer,不然的话有可能会切换一页后,又马上切换一页
-          clearTimeout(this.timer);
           this._play();
         }
       });
+      this.slide.on('beforeScrollStart', () => {
+        if (this.autoPlay) {
+          clearTimeout(this.timer);
+        }
+      });
     },
-    // 播放slider
+    _onScrollEnd() {
+      let pageIndex = this.slide.getCurrentPage().pageX;
+      this.currentPageIndex = pageIndex;
+      if (this.autoPlay) {
+        this._play();
+      }
+    },
+    _initDots() {
+      this.dots = new Array(this.children.length);
+    },
     _play() {
-      let pageIndex = this.currentPageIndex + 1;
-      if (this.loop) {
-        pageIndex += 1;
-      }
-      if (pageIndex >= this.dots.length) {
-        pageIndex = 0;
-      }
-      console.log('正在显示', pageIndex);
+      clearTimeout(this.timer);
       this.timer = setTimeout(() => {
-        // 使用goToPage方法可以跳转到指定页面
-        this.slider.goToPage(pageIndex, 400);
+        this.slide.next();
       }, this.interval);
+    }
+  },
+  watch: {
+    loop() {
+      this.update();
+    },
+    autoPlay() {
+      this.update();
+    },
+    speed() {
+      this.update();
+    },
+    threshold() {
+      this.update();
     }
   }
 };
 </script>
-<style lang="scss" scoped>
-@import '~common/scss/variable';
 
-.slider {
+<style lang="scss" rel="scss">
+@import '~common/scss/variable';
+.slide {
   min-height: 1px;
-  position: relative;
-  .slider-group {
+  .slide-group {
     position: relative;
     overflow: hidden;
     white-space: nowrap;
-    .slider-item {
-      position: relative;
+    .slide-item {
       float: left;
       box-sizing: border-box;
       overflow: hidden;
       text-align: center;
-      a {
-        display: block;
-        width: 100%;
-        overflow: hidden;
-        text-decoration: none;
-      }
-      img {
-        display: block;
-        width: 100%;
-      }
-      .type {
-        position: absolute;
-        right: 0;
-        top: 70%;
-        font-size: $font-size-medium;
-        padding: 0 0.2rem 0 0.4rem;
-        width: 1.2rem;
-        text-align: center;
-        height: 0.5rem;
-        line-height: 0.5rem;
-        border-top-left-radius: 0.15rem;
-        background-color: $color-theme;
-        color: #fff;
-      }
+    }
+    a {
+      display: block;
+      width: 100%;
+      overflow: hidden;
+      text-decoration: none;
+    }
+    img {
+      display: block;
+      width: 100%;
     }
   }
+}
 
-  .dots {
-    position: absolute;
-    right: 0;
-    left: 0;
-    bottom: 0.24rem;
-    text-align: center;
-    font-size: 0;
-    .dot {
-      display: inline-block;
-      margin: 0 0.08rem;
-      width: 0.16rem;
-      height: 0.16rem;
-      border-radius: 50%;
-      background: $color-text-l;
-      &.active {
-        width: 0.4rem;
-        border-radius: 0.1rem;
-        background: $color-theme;
-      }
+.dots {
+  position: absolute;
+  right: 0;
+  left: 0;
+  bottom: 12px;
+  transform: translateZ(1px);
+  text-align: center;
+  font-size: 0;
+  .dot {
+    display: inline-block;
+    margin: 0 4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ccc;
+    &.active {
+      width: 20px;
+      border-radius: 5px;
+      background: $color-theme;
     }
   }
 }

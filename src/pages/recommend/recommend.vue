@@ -10,7 +10,7 @@
                 <!-- 监听图片的load事件用于初始化scroll，添加needsclick类名用于解决fastclick和better-scroll的冲突 -->
                 <img class="needsclick" @load="loadImg" :src="item.pic+(isIos?'?imageView&thumbnail=750x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=750x0&quality=75&tostatic=0&type=webp')">
               </div>
-              <span class="type">{{item.typeTitle}}</span>
+              <!-- <span class="type">{{item.typeTitle}}</span> -->
             </div>
           </slider>
         </div>
