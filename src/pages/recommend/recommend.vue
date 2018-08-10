@@ -8,7 +8,7 @@
             <div v-for="(item,index) of banners" :key="index">
               <div @click="_bannerClick(item.typeTitle,item.url)">
                 <!-- 监听图片的load事件用于初始化scroll，添加needsclick类名用于解决fastclick和better-scroll的冲突 -->
-                <img class="needsclick" @load="loadImg" :src="item.pic+(isIos?'?imageView&thumbnail=750x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=750x0&quality=75&tostatic=0&type=webp')">
+                <img class="needsclick" @load="loadImg" :src="item.picUrl+(isIos?'?imageView&thumbnail=750x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=750x0&quality=75&tostatic=0&type=webp')">
               </div>
               <!-- <span class="type">{{item.typeTitle}}</span> -->
             </div>
@@ -80,7 +80,6 @@ export default {
       this.$router.push({
         path: `/recommend/${item.id}`
       });
-
       this.setSongMenu(item);
     },
     // 监听是否有播放列表，即是否有mini播放器，调整scroll的底部高度，避免内容被mini播放器覆盖
@@ -96,6 +95,7 @@ export default {
       // 获取banner数据
       const url = this.HOST + '/banner';
       const res = await this.$http.get(url);
+      console.log(res);
       if (res.status === ERR_OK) {
         console.log('成功请求banner数据');
         this.banners = res.data.banners;
