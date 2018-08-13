@@ -2,7 +2,7 @@
  * @Author: yu yi 
  * @Date: 2017-11-23 10:57:10 
  * @Last Modified by: yu yi
- * @Last Modified time: 2018-04-12 10:23:02
+ * @Last Modified time: 2018-08-13 10:31:59
  */
 <template>
   <div class="song-list">
@@ -39,7 +39,12 @@ export default {
   methods: {
     // 返回歌曲描述
     getDesc(song) {
-      return `${song.artists[0].name} - ${song.album.name}`;
+      // 因为api不统一，所以需要在这里进行处理
+      if (song.artists && song.album) {
+        return `${song.artists[0].name} - ${song.album.name}`;
+      } else {
+        return `${song.ar[0].name} - ${song.al.name}`;
+      }
     },
     // 派发点击事件
     selectItem(item, index) {

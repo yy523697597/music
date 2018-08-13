@@ -1,8 +1,8 @@
 /*
  * @Author: yu yi
  * @Date: 2017-12-04 15:38:11
- * @Last Modified by:   yu yi
- * @Last Modified time: 2017-12-04 15:38:11
+ * @Last Modified by: yu yi
+ * @Last Modified time: 2018-08-13 10:26:52
  */
 <template>
   <transition name="slide">
@@ -39,7 +39,7 @@ export default {
       this.$http.get(songMenuUrl).then(res => {
         if (res.data.code === ERR_OK) {
           console.log(res.data);
-          this.songs = res.data.result.tracks;
+          this.songs = res.data.playlist.tracks;
         }
       });
     }
