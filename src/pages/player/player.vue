@@ -2,7 +2,7 @@
  * @Author: yu yi 
  * @Date: 2017-11-23 10:03:38 
  * @Last Modified by: yu yi
- * @Last Modified time: 2018-04-23 11:22:55
+ * @Last Modified time: 2018-08-13 10:48:50
  */
 <template>
   <div class="player" v-if="playlist.length >0">
@@ -10,7 +10,7 @@
       <div class="normal-player" v-show="fullScreen">
         <!-- 播放器高斯模糊背景 -->
         <div class="background">
-          <img width="100%" height="100%" :src="currentSong.album.picUrl+(isIos?'?imageView&thumbnail=640x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=640x0&quality=75&tostatic=0&type=webp')">
+          <img width="100%" height="100%" :src="currentSong.album?currentSong.album.picUrl:currentSong.al.picUrl+(isIos?'?imageView&thumbnail=640x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=640x0&quality=75&tostatic=0&type=webp')">
         </div>
         <div class="top">
           <!-- 返回按钮 -->
@@ -19,13 +19,13 @@
           </div>
           <!-- 歌曲名称及歌手 -->
           <h1 class="title">{{currentSong.name}}</h1>
-          <h2 class="subtitle">--- {{currentSong.artists[0].name}} ---</h2>
+          <h2 class="subtitle">--- {{currentSong.artists?currentSong.artists[0].name:currentSong.ar[0].name}} ---</h2>
         </div>
         <div class="middle" @touchstart.prevent="middleTouchStart" @touchmove.prevent="middleTouchMove" @touchend="middleTouchEnd">
           <!-- 唱片 -->
           <div class="middle-l" ref="cdWrapper">
             <div class="cd-wrapper">
-              <div ref="cdContainer"><img ref="cd" :src="currentSong.album.picUrl+(isIos?'?imageView&thumbnail=640x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=640x0&quality=75&tostatic=0&type=webp')" class="image cd"></div>
+              <div ref="cdContainer"><img ref="cd" :src="currentSong.album?currentSong.album.picUrl:currentSong.al.picUrl+(isIos?'?imageView&thumbnail=640x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=640x0&quality=75&tostatic=0&type=webp')" class="image cd"></div>
             </div>
             <!-- 当前歌词 -->
             <div class="playing-lyric-wrapper">
@@ -84,10 +84,10 @@
     <!-- mini播放器 -->
     <transition name="mini ">
       <div class="mini-player " v-show="!fullScreen " @click="open ">
-        <div class="icon "><img width="40 " height="40 " :src="currentSong.album.picUrl+(isIos?'?imageView&thumbnail=640x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=640x0&quality=75&tostatic=0&type=webp')"></div>
+        <div class="icon "><img width="40 " height="40 " :src="currentSong.album?currentSong.album.picUrl:currentSong.al.picUrl+(isIos?'?imageView&thumbnail=640x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=640x0&quality=75&tostatic=0&type=webp')"></div>
         <div class="text ">
           <h2 class="name ">{{currentSong.name}}</h2>
-          <p class="desc ">{{currentSong.artists[0].name}}</p>
+          <p class="desc ">{{currentSong.artists?currentSong.artists[0].name:currentSong.ar[0].name}}</p>
         </div>
         <!-- 使用stop阻止冒泡，避免打开播放器层 -->
         <div class="control " @click.stop="togglePlaying ">
@@ -276,7 +276,7 @@ export default {
         this.next();
       }
     },
-    // 暂停音乐播放器封面旋转
+    // 暂停音乐播放器封面旋转,ios不支持动画暂停，所以就使用在外面旋转的方法
     pauseCd() {
       const cd = this.$refs.cd;
       const container = this.$refs.cdContainer;
