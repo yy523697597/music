@@ -12,8 +12,8 @@
             <div class="hot-key">
               <h1 class="title">热门搜索</h1>
               <ul>
-                <li v-for="(item,index) of hotKey" :key="index" class="item" @click="addQuery(item.k)">
-                  <span>{{item.k}}</span>
+                <li v-for="(item,index) of hotKey" :key="index" class="item" @click="addQuery(item.first)">
+                  <span>{{item.first}}</span>
                 </li>
               </ul>
             </div>
@@ -46,7 +46,7 @@ import SearchList from 'base/search-list/search-list';
 import Scroll from 'base/scroll/scroll';
 import Confirm from 'base/confirm/confirm';
 import { mapActions, mapGetters } from 'vuex';
-import { getHotKey } from 'common/js/getHotKey';
+// import { getHotKey } from 'common/js/getHotKey';
 import { playlistMixin } from 'common/js/mixin';
 
 export default {
@@ -88,9 +88,12 @@ export default {
     },
     // 获取热门搜索词
     async _getHotKey() {
-      const res = await getHotKey();
-      if (res.code === 0) {
-        this.hotKey = res.data.hotkey.slice(0, 10);
+      // const res = await getHotKey();
+      let url = this.HOST + '/search/hot';
+      const res = await this.$http(url);
+      console.log(res);
+      if (res.status === 200) {
+        this.hotKey = res.data.result.hots;
         console.log('成功请求热门搜索');
       }
     },
