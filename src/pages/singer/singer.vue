@@ -1,8 +1,11 @@
 <template>
   <div class="singer" ref="singer">
-    <ul>
+    <ul class="type">
       <span>分类：</span>
       <li v-for="singer of singerOptions" :key="singer.value" :class="listId === singer.value?'active':''" @click="getSingerList(singer.value)">{{singer.key}}</li>
+    </ul>
+    <ul class="letter">
+      <li v-for="item of letters" :key=item :class="initial === item?'active':''" @click.stop="letterClick(item)" v-show="listId !== 5001">{{item.toUpperCase()}}</li>
     </ul>
     <listview :data="artists" @pullingUp="pullingUp" @select="selectSinger" ref="singerList"></listview>
     <!-- 歌手详情页的子路由 -->
@@ -27,6 +30,7 @@ export default {
       offset: 0,
       listId: 5001,
       limit: 20,
+      initial: null,
       // 歌手数据
       artists: [],
       // 是否有更多歌手
@@ -50,6 +54,36 @@ export default {
         { key: '其他男歌手', value: 4001 },
         { key: '其他女歌手', value: 4002 },
         { key: '其他组合/乐队', value: 4003 }
+      ],
+      currentLetter: '热',
+      letters: [
+        '热',
+        'a',
+        'b',
+        'c',
+        'd',
+        'e',
+        'f',
+        'g',
+        'h',
+        'i',
+        'j',
+        'k',
+        'l',
+        'm',
+        'n',
+        'o',
+        'p',
+        'q',
+        'r',
+        's',
+        't',
+        'u',
+        'v',
+        'w',
+        'x',
+        'y',
+        'z'
       ]
     };
   },
@@ -57,6 +91,11 @@ export default {
     this.getSingerList(this.listId, this.offset, this.limit);
   },
   methods: {
+    letterClick(initial) {
+      this.initial = initial;
+      this.offset = 0;
+      this.getSingerList(this.listId, this.offset, this.limit, initial);
+    },
     // 监听是否有播放列表，即是否有mini播放器，调整scroll的底部高度，避免内容被mini播放器覆盖
     handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? '.7rem' : '';
@@ -70,8 +109,8 @@ export default {
     // limit 获取数量
     // initial 字母索引
     async getSingerList(listId, offset, limit, initial) {
-      // 获取100个热门歌手
-      if (offset) {
+      // 这里不能直接说是if(offset)，因为offset可能为0，强制转换会出问题
+      if (offset !== undefined) {
         var url =
           this.HOST +
           `/artist/list?cat=${listId}&offset=${offset}&limit=${limit}&initial=${initial}`;
@@ -105,13 +144,21 @@ export default {
     },
     // 上拉加载更多
     pullingUp() {
-      console.log(234);
       if (this.haveMore) {
         if (!this.requesting) {
-          this.getSingerList(this.listId, this.offset, this.limit);
+          this.getSingerList(
+            this.listId,
+            this.offset,
+            this.limit,
+            this.initial
+          );
         }
       } else {
-        alert('我是有底线的...');
+        this.$toasted.show('我是有底线的', {
+          theme: 'outline',
+          position: 'bottom-center',
+          duration: 2000
+        });
       }
     },
     // 歌手点击事件，需要跳转到歌手详情页
@@ -135,8 +182,26 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import '~common/scss/variable';
-
-ul {
+.letter {
+  z-index: 999;
+  position: fixed;
+  top: 1.9rem;
+  right: 0.2rem;
+  margin: auto 0;
+  text-align: center;
+  padding: 0.2rem 0;
+  border-radius: 0.2rem;
+  background-color: rgba($color: #ccc, $alpha: 0.4);
+  li {
+    font-size: 0.3rem;
+    margin-top: 0.06rem;
+    padding: 0 4px;
+  }
+  li.active {
+    color: #31c27c;
+  }
+}
+ul.type {
   padding-top: 0.1rem;
   height: 0.7rem;
   text-align: center;
@@ -145,27 +210,26 @@ ul {
   width: 100vw;
   white-space: nowrap;
   overflow: auto;
-}
-
-span {
-  display: inline-block;
-  font-size: 0.28rem;
-  margin-left: 0.2rem;
-  flex: 0 0 60px;
-}
-li.active {
-  background-color: #31c27c;
-  color: #fff;
-  border-radius: 20px;
-}
-li {
-  vertical-align: middle;
-  height: 0.5rem;
-  padding: 0px 0.1rem;
-  display: inline-block;
-  font-size: 0.28rem;
-  margin-left: 0.2rem;
-  flex: 0 0 60px;
+  span {
+    display: inline-block;
+    font-size: 0.28rem;
+    margin-left: 0.2rem;
+    flex: 0 0 60px;
+  }
+  li.active {
+    background-color: #31c27c;
+    color: #fff;
+    border-radius: 20px;
+  }
+  li {
+    vertical-align: middle;
+    height: 0.5rem;
+    padding: 0px 0.1rem;
+    display: inline-block;
+    font-size: 0.28rem;
+    margin-left: 0.2rem;
+    flex: 0 0 60px;
+  }
 }
 
 .singer {
