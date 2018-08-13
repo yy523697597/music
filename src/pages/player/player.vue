@@ -2,111 +2,113 @@
  * @Author: yu yi 
  * @Date: 2017-11-23 10:03:38 
  * @Last Modified by: yu yi
- * @Last Modified time: 2018-08-13 10:48:50
+ * @Last Modified time: 2018-08-13 14:41:14
  */
 <template>
-  <div class="player" v-if="playlist.length >0">
-    <transition name="normal" @enter="enter" @after-enter="afterEnter" @leave="leave" @after-leave="afterLeave">
-      <div class="normal-player" v-show="fullScreen">
-        <!-- 播放器高斯模糊背景 -->
-        <div class="background">
-          <img width="100%" height="100%" :src="currentSong.album?currentSong.album.picUrl:currentSong.al.picUrl+(isIos?'?imageView&thumbnail=640x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=640x0&quality=75&tostatic=0&type=webp')">
-        </div>
-        <div class="top">
-          <!-- 返回按钮 -->
-          <div class="back" @click="back">
-            <i class="icon-back"></i>
+  <div>
+    <div class="player" v-if="playlist.length >0">
+      <transition name="normal" @enter="enter" @after-enter="afterEnter" @leave="leave" @after-leave="afterLeave">
+        <div class="normal-player" v-show="fullScreen">
+          <!-- 播放器高斯模糊背景 -->
+          <div class="background">
+            <img width="100%" height="100%" :src="currentSong.album?currentSong.album.picUrl:currentSong.al.picUrl+(isIos?'?imageView&thumbnail=640x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=640x0&quality=75&tostatic=0&type=webp')">
           </div>
-          <!-- 歌曲名称及歌手 -->
-          <h1 class="title">{{currentSong.name}}</h1>
-          <h2 class="subtitle">--- {{currentSong.artists?currentSong.artists[0].name:currentSong.ar[0].name}} ---</h2>
-        </div>
-        <div class="middle" @touchstart.prevent="middleTouchStart" @touchmove.prevent="middleTouchMove" @touchend="middleTouchEnd">
-          <!-- 唱片 -->
-          <div class="middle-l" ref="cdWrapper">
-            <div class="cd-wrapper">
-              <div ref="cdContainer"><img ref="cd" :src="currentSong.album?currentSong.album.picUrl:currentSong.al.picUrl+(isIos?'?imageView&thumbnail=640x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=640x0&quality=75&tostatic=0&type=webp')" class="image cd"></div>
+          <div class="top">
+            <!-- 返回按钮 -->
+            <div class="back" @click="back">
+              <i class="icon-back"></i>
             </div>
-            <!-- 当前歌词 -->
-            <div class="playing-lyric-wrapper">
-              <div class="playing-lyric">{{playingLyric}}</div>
-            </div>
+            <!-- 歌曲名称及歌手 -->
+            <h1 class="title">{{currentSong.name}}</h1>
+            <h2 class="subtitle">--- {{currentSong.artists?currentSong.artists[0].name:currentSong.ar[0].name}} ---</h2>
           </div>
-          <scroll class="middle-r" ref="lyricList" :data="currentLyric && currentLyric.lines">
-            <!-- 歌词 -->
-            <div class="lyric-wrapper">
-              <div v-if="currentLyric">
-                <p ref="lyricLine" class="text" :class="{'current': currentLineNum === index}" v-for="(line,index) in currentLyric.lines" :key="index">{{line.txt}}</p>
+          <div class="middle" @touchstart.prevent="middleTouchStart" @touchmove.prevent="middleTouchMove" @touchend="middleTouchEnd">
+            <!-- 唱片 -->
+            <div class="middle-l" ref="cdWrapper">
+              <div class="cd-wrapper">
+                <div ref="cdContainer"><img ref="cd" :src="currentSong.album?currentSong.album.picUrl:currentSong.al.picUrl+(isIos?'?imageView&thumbnail=640x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=640x0&quality=75&tostatic=0&type=webp')" class="image cd"></div>
+              </div>
+              <!-- 当前歌词 -->
+              <div class="playing-lyric-wrapper">
+                <div class="playing-lyric">{{playingLyric}}</div>
               </div>
             </div>
-          </scroll>
-        </div>
-        <div class="bottom">
-          <!-- 切换唱片与歌词的指示器 -->
-          <div class="dot-wrapper">
-            <div class="dot" :class="{'active':currentShow==='cd'}"></div>
-            <div class="dot" :class="{'active':currentShow==='lyric'}"></div>
+            <scroll class="middle-r" ref="lyricList" :data="currentLyric && currentLyric.lines">
+              <!-- 歌词 -->
+              <div class="lyric-wrapper">
+                <div v-if="currentLyric">
+                  <p ref="lyricLine" class="text" :class="{'current': currentLineNum === index}" v-for="(line,index) in currentLyric.lines" :key="index">{{line.txt}}</p>
+                </div>
+              </div>
+            </scroll>
           </div>
-          <!-- 歌曲进度条 -->
-          <div class=" progress-wrapper ">
-            <span class="time time-l ">{{formatTime(currentTime)}}</span>
-            <div class="progress-bar-wrapper ">
-              <progress-bar :percent="percent " @percentChange="onProgressBarChange "></progress-bar>
+          <div class="bottom">
+            <!-- 切换唱片与歌词的指示器 -->
+            <div class="dot-wrapper">
+              <div class="dot" :class="{'active':currentShow==='cd'}"></div>
+              <div class="dot" :class="{'active':currentShow==='lyric'}"></div>
             </div>
-            <span class="time time-r ">{{formatTime(currentSong.duration/1000)}}</span>
+            <!-- 歌曲进度条 -->
+            <div class=" progress-wrapper ">
+              <span class="time time-l ">{{formatTime(currentTime)}}</span>
+              <div class="progress-bar-wrapper ">
+                <progress-bar :percent="percent " @percentChange="onProgressBarChange "></progress-bar>
+              </div>
+              <span class="time time-r ">{{currentSong.duration?formatTime(currentSong.duration/1000):formatTime(currentSong.dt/1000)}}</span>
+            </div>
+            <!-- 歌曲播放操作区 -->
+            <div class="operators ">
+              <!-- 播放模式 -->
+              <div class="icon i-left " @click="changeMode ">
+                <i :class="iconMode "></i>
+              </div>
+              <!-- 上一曲 -->
+              <div class="icon i-left " @click="prev " :class="disableCls ">
+                <i class="icon-prev "></i>
+              </div>
+              <!-- 播放按钮 -->
+              <div class="icon i-center " @click="togglePlaying " :class="disableCls ">
+                <i :class="playIcon "></i>
+              </div>
+              <!-- 下一曲 -->
+              <div class="icon i-right " @click="next " :class="disableCls ">
+                <i class="icon-next "></i>
+              </div>
+              <!-- 收藏 -->
+              <div class="icon i-right ">
+                <i class="icon icon-not-favorite "></i>
+              </div>
+            </div>
           </div>
-          <!-- 歌曲播放操作区 -->
-          <div class="operators ">
-            <!-- 播放模式 -->
-            <div class="icon i-left " @click="changeMode ">
-              <i :class="iconMode "></i>
-            </div>
-            <!-- 上一曲 -->
-            <div class="icon i-left " @click="prev " :class="disableCls ">
-              <i class="icon-prev "></i>
-            </div>
-            <!-- 播放按钮 -->
-            <div class="icon i-center " @click="togglePlaying " :class="disableCls ">
-              <i :class="playIcon "></i>
-            </div>
-            <!-- 下一曲 -->
-            <div class="icon i-right " @click="next " :class="disableCls ">
-              <i class="icon-next "></i>
-            </div>
-            <!-- 收藏 -->
-            <div class="icon i-right ">
-              <i class="icon icon-not-favorite "></i>
-            </div>
+        </div>
+      </transition>
+      <!-- mini播放器 -->
+      <transition name="mini ">
+        <div class="mini-player " v-show="!fullScreen " @click="open ">
+          <div class="icon "><img width="40 " height="40 " :src="currentSong.album?currentSong.album.picUrl:currentSong.al.picUrl+(isIos?'?imageView&thumbnail=640x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=640x0&quality=75&tostatic=0&type=webp')"></div>
+          <div class="text ">
+            <h2 class="name ">{{currentSong.name}}</h2>
+            <p class="desc ">{{currentSong.artists?currentSong.artists[0].name:currentSong.ar[0].name}}</p>
+          </div>
+          <!-- 使用stop阻止冒泡，避免打开播放器层 -->
+          <div class="control " @click.stop="togglePlaying ">
+            <!-- 环形歌曲进度条 -->
+            <progress-circle :radius=32 :percent="percent ">
+              <i :class="miniIcon " class="icon-mini "></i>
+            </progress-circle>
+          </div>
+          <!-- 歌曲列表按钮 -->
+          <!-- 阻止点击冒泡 -->
+          <div class="control " @click.stop="showPlaylist">
+            <i class="icon-playlist "></i>
           </div>
         </div>
-      </div>
-    </transition>
-    <!-- mini播放器 -->
-    <transition name="mini ">
-      <div class="mini-player " v-show="!fullScreen " @click="open ">
-        <div class="icon "><img width="40 " height="40 " :src="currentSong.album?currentSong.album.picUrl:currentSong.al.picUrl+(isIos?'?imageView&thumbnail=640x0&quality=75&tostatic=0&type=jpg':'_.webp?imageView&thumbnail=640x0&quality=75&tostatic=0&type=webp')"></div>
-        <div class="text ">
-          <h2 class="name ">{{currentSong.name}}</h2>
-          <p class="desc ">{{currentSong.artists?currentSong.artists[0].name:currentSong.ar[0].name}}</p>
-        </div>
-        <!-- 使用stop阻止冒泡，避免打开播放器层 -->
-        <div class="control " @click.stop="togglePlaying ">
-          <!-- 环形歌曲进度条 -->
-          <progress-circle :radius=32 :percent="percent ">
-            <i :class="miniIcon " class="icon-mini "></i>
-          </progress-circle>
-        </div>
-        <!-- 歌曲列表按钮 -->
-        <!-- 阻止点击冒泡 -->
-        <div class="control " @click.stop="showPlaylist">
-          <i class="icon-playlist "></i>
-        </div>
-      </div>
-    </transition>
-    <playlist ref="playlist"> </playlist>
-    <audio :src="playUrl" ref="music" @canplay="ready" @error="onError" @timeupdate="updateTime" @ended="musicEnd" preload="auto"></audio>
-
+      </transition>
+      <playlist ref="playlist"> </playlist>
+    </div>
+    <audio :src="playUrl" ref="music" @canplay="ready" @error="onError" @timeupdate="updateTime" @ended="musicEnd" preload="auto" id="musicAudio"></audio>
   </div>
+
 </template>
 
 <script type="text/ecmascript-6">
@@ -127,7 +129,7 @@ export default {
       // 是否是ios系统
       isIos: false,
       // 音乐播放地址
-      playUrl: '',
+      playUrl: '../../../static/bl.mp3',
       // 歌曲是否可播放
       songReady: false,
       // 当前播放时间
@@ -312,7 +314,12 @@ export default {
       return `${minute}:${second}`;
     },
     onProgressBarChange(percent) {
-      const currentTime = percent * (this.currentSong.duration / 1000);
+      let currentTime;
+      if (this.currentSong.duration) {
+        currentTime = percent * (this.currentSong.duration / 1000);
+      } else {
+        currentTime = percent * (this.currentSong.dt / 1000);
+      }
       // currentTiem 是一个可读可写的参数，写参数可以改播放进度
       console.log(currentTime);
       this.$refs.music.currentTime = currentTime;
@@ -394,6 +401,7 @@ export default {
           this.playUrl = res.data.data[0].url;
           // 切换一首新歌之后，需要重置cd的旋转角度
           this.resetCd();
+          // this.$refs.music.play();
         }
       });
     },
@@ -457,10 +465,20 @@ export default {
       const touch = e.touches[0];
       const deltaX = touch.pageX - this.touch.startX;
       const deltaY = touch.pageY - this.touch.startY;
-      // Y方向移动距离大于X方向的移动距离时，认为是纵向滚动，就忽略调
-      if (Math.abs(deltaY) > Math.abs(deltaX)) {
+      const screenWidth = document.body.clientWidth;
+      console.log(Math.abs(deltaX));
+      console.log(screenWidth);
+      if (
+        Math.abs(deltaX) < screenWidth * 0.6 ||
+        Math.abs(deltaY) > Math.abs(deltaX)
+      ) {
+        console.log('no');
         return;
       }
+      // Y方向移动距离大于X方向的移动距离时，认为是纵向滚动，就忽略调
+      // if (Math.abs(deltaY) > Math.abs(deltaX)) {
+      //   return;
+      // }
       // 如果是唱片界面，距离左侧的距离就是0
       const left = this.currentShow === 'cd' ? 0 : -window.innerWidth;
       const width = Math.min(0, Math.max(-window.innerWidth, left + deltaX));

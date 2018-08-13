@@ -34,7 +34,7 @@ export default {
       this.$http.get(rankDetailUrl).then(res => {
         console.log(res.data);
         if (res.data.code === ERR_OK) {
-          this.playlist = res.data.result.tracks;
+          this.playlist = res.data.playlist.tracks;
         }
       });
     }
@@ -47,5 +47,4 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 </style>
