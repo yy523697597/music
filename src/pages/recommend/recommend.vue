@@ -117,8 +117,13 @@ export default {
     },
     // banner点击事件
     _bannerClick(type, url) {
+      console.log(url);
       if (url !== '') {
-        window.location = url;
+        if (!url.startsWith('http')) {
+          window.location = `https://music.163.com/m${url}`;
+        } else {
+          window.location = url;
+        }
       }
     },
     // banner图片载入后,刷新scroll
